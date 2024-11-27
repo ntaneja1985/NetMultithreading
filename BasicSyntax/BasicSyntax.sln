@@ -11,6 +11,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OffloadingTasks", "..\Offlo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebServerAssignmentQuestion", "..\WebServerAssignmentQuestion\WebServerAssignmentQuestion.csproj", "{6D1651C9-B6AD-4565-B3DD-CC7900046A0D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SynchronizationOverview", "..\SynchronizationOverview\SynchronizationOverview.csproj", "{B25EA5FD-5E2A-444F-A1AC-EBAE0F4EB081}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirlineBookingSystemAssignment", "..\AirlineBookingSystemAssignment\AirlineBookingSystemAssignment.csproj", "{979E83CE-0437-4CB2-9887-0C16E6F0230A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonitorThreadSynchronization", "..\MonitorThreadSynchronization\MonitorThreadSynchronization.csproj", "{655F0CF6-6159-493A-84D7-9A858B5185B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MutexThreadProcesSynchronization", "..\MutexThreadProcesSynchronization\MutexThreadProcesSynchronization.csproj", "{3AF837DA-4D86-4745-9001-1B5E6F01C5CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReaderWriterLock", "..\ReaderWriterLock\ReaderWriterLock.csproj", "{9B78C0B5-9FBA-4E5B-9229-DD3D7F2BC391}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemaphoreLimitNumberOfThreads", "..\SemaphoreLimitNumberOfThreads\SemaphoreLimitNumberOfThreads.csproj", "{F4C72FC5-87C0-4E03-8292-495D1BC29136}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +45,30 @@ Global
 		{6D1651C9-B6AD-4565-B3DD-CC7900046A0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D1651C9-B6AD-4565-B3DD-CC7900046A0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D1651C9-B6AD-4565-B3DD-CC7900046A0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B25EA5FD-5E2A-444F-A1AC-EBAE0F4EB081}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B25EA5FD-5E2A-444F-A1AC-EBAE0F4EB081}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B25EA5FD-5E2A-444F-A1AC-EBAE0F4EB081}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B25EA5FD-5E2A-444F-A1AC-EBAE0F4EB081}.Release|Any CPU.Build.0 = Release|Any CPU
+		{979E83CE-0437-4CB2-9887-0C16E6F0230A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{979E83CE-0437-4CB2-9887-0C16E6F0230A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{979E83CE-0437-4CB2-9887-0C16E6F0230A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{979E83CE-0437-4CB2-9887-0C16E6F0230A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{655F0CF6-6159-493A-84D7-9A858B5185B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{655F0CF6-6159-493A-84D7-9A858B5185B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{655F0CF6-6159-493A-84D7-9A858B5185B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{655F0CF6-6159-493A-84D7-9A858B5185B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AF837DA-4D86-4745-9001-1B5E6F01C5CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AF837DA-4D86-4745-9001-1B5E6F01C5CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AF837DA-4D86-4745-9001-1B5E6F01C5CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AF837DA-4D86-4745-9001-1B5E6F01C5CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B78C0B5-9FBA-4E5B-9229-DD3D7F2BC391}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B78C0B5-9FBA-4E5B-9229-DD3D7F2BC391}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B78C0B5-9FBA-4E5B-9229-DD3D7F2BC391}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B78C0B5-9FBA-4E5B-9229-DD3D7F2BC391}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4C72FC5-87C0-4E03-8292-495D1BC29136}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4C72FC5-87C0-4E03-8292-495D1BC29136}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4C72FC5-87C0-4E03-8292-495D1BC29136}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4C72FC5-87C0-4E03-8292-495D1BC29136}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
