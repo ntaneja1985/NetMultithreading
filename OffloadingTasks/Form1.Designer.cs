@@ -61,7 +61,7 @@
             lblMessage.Size = new Size(50, 20);
             lblMessage.TabIndex = 2;
             lblMessage.Text = "label1";
-            lblMessage.Click += label1_Click;
+            //lblMessage.Click += label1_Click;
             // 
             // Form1
             // 

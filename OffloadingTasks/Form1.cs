@@ -13,10 +13,7 @@ namespace OffloadingTasks
            thread.Start();
         }
 
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
+        
 
         private void button2_Click(object sender, EventArgs e)
         {
@@ -26,10 +23,8 @@ namespace OffloadingTasks
 
         private void ShowMessage(string message, int delay)
         {
-            Monitor.Enter(lblMessage);
             Thread.Sleep(delay);
             lblMessage.Text = message;
-            Monitor.Exit(lblMessage);
         }
     }
 }

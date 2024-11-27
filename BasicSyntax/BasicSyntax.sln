@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DivideConquer", "..\DivideC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OffloadingTasks", "..\OffloadingTasks\OffloadingTasks.csproj", "{2F9B80A4-B69E-4EF6-ACF6-1572B028D90C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebServerAssignmentQuestion", "..\WebServerAssignmentQuestion\WebServerAssignmentQuestion.csproj", "{6D1651C9-B6AD-4565-B3DD-CC7900046A0D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{2F9B80A4-B69E-4EF6-ACF6-1572B028D90C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F9B80A4-B69E-4EF6-ACF6-1572B028D90C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F9B80A4-B69E-4EF6-ACF6-1572B028D90C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D1651C9-B6AD-4565-B3DD-CC7900046A0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D1651C9-B6AD-4565-B3DD-CC7900046A0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D1651C9-B6AD-4565-B3DD-CC7900046A0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D1651C9-B6AD-4565-B3DD-CC7900046A0D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

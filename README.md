@@ -221,3 +221,87 @@ public partial class Form1 : Form
 }
 
 ```
+
+## Simulate a web server that handles concurrent requests
+- ![alt text](image-3.png)
+- Lets say we have a web server that handles multiple requests
+- We need to have a Monitor Queue that monitors the incoming requests and assigns them to a Request Processor
+- If we do it in a single thread this would be blocking the user inputs till each input is processed
+- We need to solve it using Divide and Conquer strategy
+```c#
+
+//Using a single thread
+Console.WriteLine("Server is running. Type 'exit' to stop.");
+while (true)
+{
+    string? input = Console.ReadLine();
+    if (input?.ToLower() == "exit")
+    {
+        break;
+    }
+    ProcessInput(input);
+}
+
+static void ProcessInput(string? input)
+{
+    // Simulate processing time
+    Thread.Sleep(2000);
+    Console.WriteLine($"Processed input: {input}");
+}
+
+```
+- We need to enqueue the request into the request queue.
+- We need to have a monitor queue
+- We need to process this request
+- To accomplish this we have the following code:
+```c#
+using System.Net.Http.Headers;
+
+Queue<string?> requestQueue = new Queue<string?>();
+
+//2. Start the request monitoring thread
+Thread monitoringThread = new Thread(MonitorQueue);
+monitoringThread.Start();
+
+//1. Enqueue the requests
+Console.WriteLine("Server is running. Type 'exit' to stop.");
+while (true)
+{
+    string? input = Console.ReadLine();
+    if (input?.ToLower() == "exit")
+    {
+        break;
+    }
+    //main thread
+    requestQueue.Enqueue(input);
+}
+
+void MonitorQueue()
+{
+    while (true)
+    {
+        if (requestQueue.Count > 0)
+        {
+            string? input = requestQueue.Dequeue();
+            // Processing thread
+            Thread processingThread = new Thread(() => ProcessInput(input));
+            processingThread.Start();
+        }
+        Thread.Sleep(100);
+    }
+}
+
+
+//3. Processing the requests
+ void ProcessInput(string? input)
+{
+    // Simulate processing time
+    Thread.Sleep(2000);
+    Console.WriteLine($"Processed input: {input}");
+}
+```
+- Notice above we have 3 threads, main thread for enqueuing requests, monitoring thread to monitor the queue of requests and processor thread to process the request
+- Notice we have using Queue collection here. What if the CPU scheduler schedules the main thread and monitoring thread to work at the same time in different cores of CPU 
+- In this case, we can have race conditions so we will have to use Threadsafe collections or Parallel Collections. 
+
+## Thread Synchronization
