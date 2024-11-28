@@ -3,25 +3,35 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicSyntax", "BasicSyntax.csproj", "{D2B2B65F-8930-486E-A051-56D9D80E42CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BasicSyntax", "BasicSyntax.csproj", "{D2B2B65F-8930-486E-A051-56D9D80E42CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DivideConquer", "..\DivideConquer\DivideConquer.csproj", "{BA6C77FE-7D05-49E3-942B-0E78BF41C7E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DivideConquer", "..\DivideConquer\DivideConquer.csproj", "{BA6C77FE-7D05-49E3-942B-0E78BF41C7E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OffloadingTasks", "..\OffloadingTasks\OffloadingTasks.csproj", "{2F9B80A4-B69E-4EF6-ACF6-1572B028D90C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OffloadingTasks", "..\OffloadingTasks\OffloadingTasks.csproj", "{2F9B80A4-B69E-4EF6-ACF6-1572B028D90C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebServerAssignmentQuestion", "..\WebServerAssignmentQuestion\WebServerAssignmentQuestion.csproj", "{6D1651C9-B6AD-4565-B3DD-CC7900046A0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebServerAssignmentQuestion", "..\WebServerAssignmentQuestion\WebServerAssignmentQuestion.csproj", "{6D1651C9-B6AD-4565-B3DD-CC7900046A0D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SynchronizationOverview", "..\SynchronizationOverview\SynchronizationOverview.csproj", "{B25EA5FD-5E2A-444F-A1AC-EBAE0F4EB081}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SynchronizationOverview", "..\SynchronizationOverview\SynchronizationOverview.csproj", "{B25EA5FD-5E2A-444F-A1AC-EBAE0F4EB081}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirlineBookingSystemAssignment", "..\AirlineBookingSystemAssignment\AirlineBookingSystemAssignment.csproj", "{979E83CE-0437-4CB2-9887-0C16E6F0230A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AirlineBookingSystemAssignment", "..\AirlineBookingSystemAssignment\AirlineBookingSystemAssignment.csproj", "{979E83CE-0437-4CB2-9887-0C16E6F0230A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonitorThreadSynchronization", "..\MonitorThreadSynchronization\MonitorThreadSynchronization.csproj", "{655F0CF6-6159-493A-84D7-9A858B5185B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonitorThreadSynchronization", "..\MonitorThreadSynchronization\MonitorThreadSynchronization.csproj", "{655F0CF6-6159-493A-84D7-9A858B5185B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MutexThreadProcesSynchronization", "..\MutexThreadProcesSynchronization\MutexThreadProcesSynchronization.csproj", "{3AF837DA-4D86-4745-9001-1B5E6F01C5CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MutexThreadProcesSynchronization", "..\MutexThreadProcesSynchronization\MutexThreadProcesSynchronization.csproj", "{3AF837DA-4D86-4745-9001-1B5E6F01C5CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReaderWriterLock", "..\ReaderWriterLock\ReaderWriterLock.csproj", "{9B78C0B5-9FBA-4E5B-9229-DD3D7F2BC391}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReaderWriterLock", "..\ReaderWriterLock\ReaderWriterLock.csproj", "{9B78C0B5-9FBA-4E5B-9229-DD3D7F2BC391}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemaphoreLimitNumberOfThreads", "..\SemaphoreLimitNumberOfThreads\SemaphoreLimitNumberOfThreads.csproj", "{F4C72FC5-87C0-4E03-8292-495D1BC29136}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SemaphoreLimitNumberOfThreads", "..\SemaphoreLimitNumberOfThreads\SemaphoreLimitNumberOfThreads.csproj", "{F4C72FC5-87C0-4E03-8292-495D1BC29136}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignallingAutoResetEvent", "..\SignallingAutoResetEvent\SignallingAutoResetEvent.csproj", "{4C5F95F9-F2EA-4225-9C48-0E1B8F5D5C3D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManualResetEventReleaseMultipleThreads", "..\ManualResetEventReleaseMultipleThreads\ManualResetEventReleaseMultipleThreads.csproj", "{C391C27C-7C11-42FA-AB39-B96875DA0A29}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwoWaySignallingManualResetEvent", "..\TwoWaySignallingManualResetEvent\TwoWaySignallingManualResetEvent.csproj", "{01B223E0-2CA5-40E3-A552-E8ABEDD87195}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorThreadAffinity", "..\BlazorThreadAffinity\BlazorThreadAffinity.csproj", "{A41FBBEB-10F0-4FED-8009-9C559C611BD5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeadlockExample", "..\DeadlockExample\DeadlockExample.csproj", "{16BE0D88-42DA-407C-A8C5-DD8DE3166B3B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +79,26 @@ Global
 		{F4C72FC5-87C0-4E03-8292-495D1BC29136}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4C72FC5-87C0-4E03-8292-495D1BC29136}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4C72FC5-87C0-4E03-8292-495D1BC29136}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C5F95F9-F2EA-4225-9C48-0E1B8F5D5C3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C5F95F9-F2EA-4225-9C48-0E1B8F5D5C3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C5F95F9-F2EA-4225-9C48-0E1B8F5D5C3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C5F95F9-F2EA-4225-9C48-0E1B8F5D5C3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C391C27C-7C11-42FA-AB39-B96875DA0A29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C391C27C-7C11-42FA-AB39-B96875DA0A29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C391C27C-7C11-42FA-AB39-B96875DA0A29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C391C27C-7C11-42FA-AB39-B96875DA0A29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01B223E0-2CA5-40E3-A552-E8ABEDD87195}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01B223E0-2CA5-40E3-A552-E8ABEDD87195}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01B223E0-2CA5-40E3-A552-E8ABEDD87195}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01B223E0-2CA5-40E3-A552-E8ABEDD87195}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A41FBBEB-10F0-4FED-8009-9C559C611BD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A41FBBEB-10F0-4FED-8009-9C559C611BD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A41FBBEB-10F0-4FED-8009-9C559C611BD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A41FBBEB-10F0-4FED-8009-9C559C611BD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16BE0D88-42DA-407C-A8C5-DD8DE3166B3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16BE0D88-42DA-407C-A8C5-DD8DE3166B3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16BE0D88-42DA-407C-A8C5-DD8DE3166B3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16BE0D88-42DA-407C-A8C5-DD8DE3166B3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -841,3 +841,339 @@ void ProcessInput(string? input)
 ```
 - We should use Concurrent Collections rather than simple Queue data structure.
 
+
+## AutoReset Event: Used for signalling between threads
+- Producer and Consumer scenario
+- Signalling mechanism between Producer and Consumer
+- Binary Signal : ON or OFF 
+- ![alt text](image-16.png)
+- An AutoResetEvent is a synchronization primitive used in multithreading environments, such as in C# programming. 
+- It allows threads to wait for an event to occur and then automatically reset itself after releasing a single waiting thread
+- Here's a simple analogy: Imagine a store with only one checkout lane. Only one customer (thread) can be served at a time, and after that customer is done, the lane resets and the next customer can proceed
+- In technical terms, an AutoResetEvent can be in either a signaled or non-signaled state
+- When a thread calls the WaitOne() method on an AutoResetEvent, it will block until the event is signaled
+- When another thread calls the Set() method, it signals the event, releasing one waiting thread and resetting the event back to the non-signaled state
+```c#
+using System;
+using System.Threading;
+
+class Program
+{
+    private static AutoResetEvent autoResetEvent = new AutoResetEvent(false);
+    
+    static void Main()
+    {
+        new Thread(Worker).Start();
+        
+        Console.WriteLine("Main thread is doing some work...");
+        Thread.Sleep(2000); // Simulate work
+        
+        Console.WriteLine("Main thread signals the worker thread.");
+        autoResetEvent.Set(); // Signal the event
+        
+        Console.ReadLine();
+    }
+    
+    private static void Worker()
+    {
+        Console.WriteLine("Worker thread is waiting for a signal...");
+        autoResetEvent.WaitOne(); // Wait for a signal
+        
+        Console.WriteLine("Worker thread received a signal and is continuing its work.");
+    }
+}
+
+```
+- **Explanation of the Code**
+- Main Thread:
+    Performs some initial work.
+    Signals the worker thread using autoResetEvent.Set().
+- Worker Thread:
+    Starts and waits for a signal using autoResetEvent.WaitOne().
+    Once the signal is received, it continues its work.
+- **One Time Signal**: The signal from Set() only allows one waiting thread to proceed, and then the event automatically resets to the non-signaled state.
+- **Synchronization**: This mechanism ensures that the threads are properly synchronized, and the worker thread only proceeds when the main thread is ready.
+  
+```c#
+using AutoResetEvent autoResetEvent = new AutoResetEvent(false);
+
+////consumer thread
+//autoResetEvent.WaitOne();
+
+////producer thread
+//autoResetEvent.Set();
+
+string? userInput = null;
+Console.WriteLine("Server is running. Type 'go' to proceed");
+
+//Start the worker thread
+//Thread workerThread = new Thread(Worker);
+//workerThread.Start();
+for(int i = 0; i<3;i++)
+{
+    Thread workThread = new Thread(Worker);
+    workThread.Name = $"Worker - {i+1}";
+    workThread.Start();
+}
+
+//Main Thread receives user input and sends signals
+
+while (true)
+{
+    userInput = Console.ReadLine() ?? "";
+
+    //Signal the worker thread if the input is "go"
+    if(userInput.ToLower() == "go")
+    {
+        autoResetEvent.Set();
+    }
+}
+
+void Worker()
+{
+    while (true)
+    {
+        Console.WriteLine($"{Thread.CurrentThread.Name} is waiting for the signal");
+
+        autoResetEvent.WaitOne();
+        Console.WriteLine($"{Thread.CurrentThread.Name} proceeds");
+        Thread.Sleep(2000);
+    }
+}
+
+
+
+```
+- AutoResetEvent is for interaction between threads, not for protecting the critical section.
+
+## Manual Reset Event: Similar to Auto Reset Event except that reset is not automatic
+ - A ManualResetEvent is another synchronization primitive used in multithreading environments, much like the AutoResetEvent. 
+ - However, there is a key difference: ManualResetEvent does not automatically reset itself after releasing threads. 
+ - Instead, it remains in the signaled state until you manually reset it.
+```c#
+using System;
+using System.Threading;
+
+class Program
+{
+    private static ManualResetEvent manualResetEvent = new ManualResetEvent(false);
+    
+    static void Main()
+    {
+        new Thread(Worker).Start();
+        new Thread(Worker).Start();
+        
+        Console.WriteLine("Main thread is doing some work...");
+        Thread.Sleep(2000); // Simulate work
+        
+        Console.WriteLine("Main thread signals the worker threads.");
+        manualResetEvent.Set(); // Signal the event
+        
+        Thread.Sleep(1000); // Give threads time to process the signal
+        
+        Console.WriteLine("Main thread resets the event.");
+        manualResetEvent.Reset(); // Reset the event
+
+        Console.ReadLine();
+    }
+    
+    private static void Worker()
+    {
+        Console.WriteLine("Worker thread is waiting for a signal...");
+        manualResetEvent.WaitOne(); // Wait for a signal
+        
+        Console.WriteLine("Worker thread received a signal and is continuing its work.");
+    }
+}
+
+
+```
+### Explanation of the Code
+**Main Thread**:
+- Starts two worker threads.
+- Signals the worker threads using manualResetEvent.Set().
+- Resets the event after a delay using manualResetEvent.Reset().
+
+**Worker Threads:**
+- Start and wait for a signal using manualResetEvent.WaitOne().
+- Once the signal is received, they proceed with their work.
+
+**Key Points:**
+- Persistent Signal: The signal from Set() allows all waiting threads to proceed, and the event remains in the signaled state until you manually reset it.
+- Manual Control: You have to explicitly call Reset() to block threads again.
+
+
+## Assignment: Two way signalling in Producer-Consumer scenario
+- Let us say we want a producer that add 10 integers one by one to a queue
+- Then we want 3 threads that will consume the queue and dequeue the items from it.
+- Once they are done dequeuing, they should send a signal to the producer to produce more.
+- In this case, we will one manual reset event to send a signal from the producer. 
+- Producer can run a loop and add 10 integers to the queue and then send a Set() signal to the worker threads
+- The worker threads can consume the queue and then they also can use a separate manual reset event to send a signal to the Producer to produce some more.
+```c#
+Queue<int> queue = new Queue<int>();
+ManualResetEventSlim consumeEvent = new ManualResetEventSlim(false);
+ManualResetEventSlim produceEvent = new ManualResetEventSlim(true);
+
+int consumerCounter = 0;
+object lockConsumerCount = new object();    
+
+Thread[] consumerThreads = new Thread[3];
+for(int i=0; i<consumerThreads.Length;i++)
+{
+    consumerThreads[i] = new Thread(Consume);
+    consumerThreads[i].Name = $"Consumer - {i + 1}";
+    consumerThreads[i].Start();
+}
+
+while(true)
+{
+    produceEvent.Wait();
+    produceEvent.Reset();
+    Console.WriteLine("To produce, enter 'p'");
+    var input = Console.ReadLine() ?? "";
+    if(input.ToLower() =="p")
+    {
+        for(int i = 0; i < 10; i++)
+        {
+            queue.Enqueue(i);
+            Console.WriteLine($"Produced: {i}");
+        }
+        consumeEvent.Set();
+    }
+
+}
+
+//Consumer's behaviour
+void Consume()
+{
+    while (true)
+    {
+        consumeEvent.Wait();
+
+        while (queue.TryDequeue(out int input))
+        {
+            //work on the items produced
+            Thread.Sleep(500);
+            Console.WriteLine($"Consumed: {input} from thread: {Thread.CurrentThread.Name}");
+        }
+
+        lock (lockConsumerCount)
+        {
+            consumerCounter++;
+            if (consumerCounter == 3)
+            {
+                consumeEvent.Reset();
+                produceEvent.Set();
+                consumerCounter = 0;
+                Console.WriteLine("***********");
+                Console.WriteLine("Please produce more....");
+                Console.WriteLine("***********");
+            }
+        }
+       
+    }
+}
+
+```
+- Note that we have to use a counter to keep track of consumer threads and only one of them should be allowed inside the critical section
+- For this we use a lock for thread synchronization.
+
+## Thread Affinity
+- Thread affinity refers to the binding of a software thread to a specific hardware core or set of cores, ensuring that the thread runs only on those cores. 
+- This is also known as CPU affinity or processor affinity.
+- **Performance Optimization**: By binding a thread to a specific CPU core, you can optimize performance, particularly in real-time systems or when dealing with threads that frequently access the same data. 
+- This can reduce cache misses and improve data locality.
+- **Consistent Performance**: Thread affinity can help achieve consistent performance since the thread won't be moved to another core by the scheduler, which could potentially lead to a performance hit due to cache invalidation.
+- **Multi-Core Systems**: In multi-core systems, it allows developers to assign specific tasks to specific cores, making it easier to manage the workload distribution and optimize the system's overall performance.
+- Often we run into problems where in a multi-threaded environment, resources or variables created in one thread are accessed by another thread.
+- This is particular observed in FrontEnd UI based applications like Winforms or Blazor.
+- Suppose in a winforms application we have a label called lblMessage.
+- Now on click of a button or 2 buttons we create 1 or more threads that try to access that label and try and update it.
+- This can cause the following error:
+- ![alt text](image-17.png)
+- This is because lblMessage is created in the UI thread (which is the main thread) and now 2 other threads created on button click events are trying to access it
+- To set the affinity we can use Invoke() method like this:
+  ```c#
+    if (lblMessage.InvokeRequired)
+    {
+        lblMessage.Invoke(() =>
+        {
+            lblMessage.Text = message;
+        });
+    }
+    else
+    {
+        lblMessage.Text = message;
+    }
+
+  ```
+
+## Thread Safety
+- A function or data structure or class is considered thread safe when it can be used concurrently by multiple threads without causing race conditions or unexpected behaviors or data corruptions
+- So this means that within the data structure or class proper locking mechanisms have been used.
+
+
+## Nested Locks and Deadlocks
+- Deadlocks happens within threads that have nested locks.
+- Lets say we have 2 threads that are waiting for each other: Thread 1 waits for Thread 2 and vice versa. This is a deadlock situation
+- Here is an example of deadlock
+```c#
+ //e-commerce users and orders
+//1. managing users ( user -> order)
+//2. managing orders (order -> user)
+
+// Thread 1 wants to lock user first and then lock order
+//Thread 2 wants to lock order first and then lock user
+
+object userLock = new object();
+object orderLock = new object();
+
+Thread thread = new Thread(ManageOrder);
+thread.Start();
+
+ManageUser();
+
+thread.Join();
+Console.WriteLine("Program finished");
+Console.ReadLine();
+
+void ManageUser()
+{
+    lock(userLock)
+    {
+        Console.WriteLine("User Management acquired the user lock. ");
+        Thread.Sleep(2000);
+
+        lock(orderLock)
+        {
+            Console.WriteLine("User Management acquired the order lock. ");
+        }
+    }
+}
+
+void ManageOrder()
+{
+    lock (orderLock)
+    {
+        Console.WriteLine("Order Management acquired the order lock. ");
+        Thread.Sleep(1000);
+
+        lock (userLock)
+        {
+            Console.WriteLine("Order Management acquired the user lock. ");
+        }
+    }
+}
+
+
+
+
+```
+
+### Strategies to Avoid Deadlocks:
+- Avoid nested locks
+- Lock Ordering: Ensure that all threads acquire locks in a consistent order.
+- Timeouts: Use timeouts when trying to acquire locks, so threads don't wait indefinitely.
+- Deadlock Detection: Implement algorithms to detect and resolve deadlocks, such as releasing and reacquiring locks.
+- Lock Hierarchies: Design systems with a hierarchy of locks, where lower-level locks are always acquired before higher-level locks. 

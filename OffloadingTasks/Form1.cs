@@ -24,7 +24,18 @@ namespace OffloadingTasks
         private void ShowMessage(string message, int delay)
         {
             Thread.Sleep(delay);
-            lblMessage.Text = message;
+            if (lblMessage.InvokeRequired)
+            {
+                lblMessage.Invoke(() =>
+                {
+                    lblMessage.Text = message;
+                });
+            }
+            else
+            {
+                lblMessage.Text = message;
+            }
+
         }
     }
 }
