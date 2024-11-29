@@ -9,9 +9,11 @@ object userLock = new object();
 object orderLock = new object();
 
 Thread thread = new Thread(ManageOrder);
+thread.Name = "Order Thread";
 thread.Start();
 
 ManageUser();
+Thread.CurrentThread.Name = "Main User Thread";
 
 thread.Join();
 Console.WriteLine("Program finished");

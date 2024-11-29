@@ -1177,3 +1177,713 @@ void ManageOrder()
 - Timeouts: Use timeouts when trying to acquire locks, so threads don't wait indefinitely.
 - Deadlock Detection: Implement algorithms to detect and resolve deadlocks, such as releasing and reacquiring locks.
 - Lock Hierarchies: Design systems with a hierarchy of locks, where lower-level locks are always acquired before higher-level locks. 
+
+## Tools in Visual Studio to debug multiple threads
+- Parallel Stacks Window is used to debug multiple threads
+- We also have Threads Window
+- ![alt text](image-18.png)
+- In the Threads window, i can freeze threads or thaw threads. Freeze means to stop executing and thaw means to allow it to continue again
+- ![alt text](image-19.png)
+- We can place a pause on any thread and we can manipulate execution of threads
+
+## Thread States 
+- Specified the execution state of a Thread
+- ![alt text](image-20.png)
+- The ThreadState enumeration defines a set of all possible execution states for threads. 
+- It's of interest only in a few debugging scenarios. 
+- Your code should never use the thread state to synchronize the activities of threads.
+- Once a thread is created, it's in at least one of the states until it terminates.
+- Every thread starts with unstarted state and then goes to Running State and ends with Stopped
+- ![alt text](image-21.png)
+
+## Make a Thread wait for a period of time
+- There are 3 different ways to do this
+- Thread.Sleep()
+- Thread.SpinWait()
+- SpinWait.SpinUntil()
+- Thread.Sleep is used to pause the execution of the current thread for a specified period.
+- When a thread calls Thread.Sleep, it is taken out of the thread scheduler's queue for the specified time duration.
+- When a thread goes to sleep, it is put out of the CPU 
+- Thread.SpinWait is used to introduce a busy-wait loop that keeps the CPU busy for a specified number of iterations.
+- Instead of putting the thread to sleep, Thread.SpinWait keeps the thread running, consuming CPU cycles while it waits.
+- We have to be careful in using Thread.SpinWait(iterations)
+- Thread.Sleep conserves CPU resources by putting the thread to sleep, while Thread.SpinWait consumes CPU resources by keeping the thread active in a busy-wait loop.
+- Use Thread.Sleep when you can afford the thread to be inactive and save CPU cycles. Use Thread.SpinWait when you need very short, precise waits and can afford higher CPU usage.
+- Thread.Sleep incurs a context switch, while Thread.SpinWait avoids context switching but at the cost of higher CPU consumption.
+- ![alt text](image-22.png)
+- In SpinWait.SpinUntil() we wait till a condition is true.
+  
+## Returning results from a thread
+- It is not possible to return results from a thread
+- In Task class there is built in functionality to return a result 
+- Only way to return a result is through a shared variable
+- Also look at the Divide and Conquer example
+```c#
+string? result = null;
+Thread thread = new Thread(Work);
+thread.Start();
+
+thread.Join();
+Console.WriteLine($"Result from worker thread is {result ?? "N/A"}");
+
+void Work()
+{
+    Console.WriteLine("Started doing some work");
+    Thread.Sleep(1000);
+    result = "There you go with the result";
+}
+
+```
+
+## Cancelling a thread 
+- Lets say we have a main thread and a worker thread
+- If from the main thread we want to cancel the worker thread, we should be able to do that. 
+- This can happen if there is a long delay in getting response from the worker thread or if the user cancels
+```c#
+bool cancelThread = false;
+Thread thread = new Thread(Work);
+thread.Start();
+
+Console.WriteLine("To cancel press 'c'");
+
+var input = Console.ReadLine();
+if (input.ToLower()=="c")
+{
+    cancelThread = true;
+}
+thread.Join();
+Console.ReadLine();
+void Work()
+{
+    Console.WriteLine("Started doing work");
+    for(int i = 0; i < 100000; i++)
+    {
+        if(cancelThread)
+        {
+            Console.WriteLine($"User requested cancellation at iteration: {i}");
+            break; 
+        }
+        Thread.SpinWait(300000);
+    }
+    Console.WriteLine("Work is done");
+}
+
+```
+- Another way is to use CancellationTokenSource
+- ![alt text](image-23.png)
+```c#
+using System;
+using System.Threading;
+
+public class Example
+{
+    public static void Main()
+    {
+        // Create the token source.
+        CancellationTokenSource cts = new CancellationTokenSource();
+
+        // Pass the token to the cancelable operation.
+        ThreadPool.QueueUserWorkItem(new WaitCallback(DoSomeWork), cts.Token);
+        Thread.Sleep(2500);
+
+        // Request cancellation.
+        cts.Cancel();
+        Console.WriteLine("Cancellation set in token source...");
+        Thread.Sleep(2500);
+        // Cancellation should have happened, so call Dispose.
+        cts.Dispose();
+    }
+
+    // Thread 2: The listener
+    static void DoSomeWork(object? obj)
+    {
+        if (obj is null)
+            return;
+
+        CancellationToken token = (CancellationToken)obj;
+
+        for (int i = 0; i < 100000; i++)
+        {
+            if (token.IsCancellationRequested)
+            {
+                Console.WriteLine("In iteration {0}, cancellation has been requested...",
+                                  i + 1);
+                // Perform cleanup if necessary.
+                //...
+                // Terminate the operation.
+                break;
+            }
+            // Simulate some work.
+            Thread.SpinWait(500000);
+        }
+    }
+}
+// The example displays output like the following:
+//       Cancellation set in token source...
+//       In iteration 1430, cancellation has been requested...
+```
+
+## Thread Pool
+- A ThreadPool is a pool of worker threads maintained by a system to perform tasks efficiently. 
+- It is designed to manage and reuse threads for executing multiple tasks, minimizing the overhead associated with creating and destroying threads.
+- Drawback is there is a maximum number of threads available in the pool
+- Every application has its own threadpool
+- A threadpool has a maximum number and minimum number of threads defined.
+- **Efficient Resource Management**: Threads are reused, which reduces the overhead of thread creation and destruction.
+- **Improved Performance**: By maintaining a pool of threads, the system can handle multiple tasks concurrently without the high cost of constantly creating new threads.
+- **Automatic Scaling**: The thread pool can automatically adjust the number of worker threads based on the workload, ensuring optimal performance.
+- Max worker threads: 32767 and Max IO threads: 1000
+- Please note Tasks use ThreadPool automatically.
+- ThreadPool.QueueUserWorkItem: Queues a method for execution. The method executes when a thread pool thread becomes available.
+- WaitCallback Delegate: Represents a callback method to be executed by a thread pool thread.
+- If you want to pass information to the callback method, create an object that contains the necessary information and pass it to the QueueUserWorkItem(WaitCallback, Object) method as the second argument. 
+- Each time the callback method executes, the state parameter contains this object.
+```c#
+using System;
+using System.Threading;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("Queueing tasks to the ThreadPool...");
+
+        // Queue tasks to the ThreadPool
+        ThreadPool.QueueUserWorkItem(new WaitCallback(WorkMethod), "Task 1");
+        ThreadPool.QueueUserWorkItem(new WaitCallback(WorkMethod), "Task 2");
+        ThreadPool.QueueUserWorkItem(new WaitCallback(WorkMethod), "Task 3");
+
+        // Wait for user input to prevent the application from closing immediately
+        Console.ReadLine();
+    }
+
+    static void WorkMethod(object state)
+    {
+        string taskName = (string)state;
+        Console.WriteLine($"{taskName} is being processed by thread {Thread.CurrentThread.ManagedThreadId}");
+        
+        // Simulate work
+        Thread.Sleep(1000);
+
+        Console.WriteLine($"{taskName} has completed.");
+    }
+}
+
+```
+
+- Using Thread pool threads
+```c#
+//ThreadPool.GetMaxThreads(out var maxWorkerThreads, out var maxIOThreads);
+//Console.WriteLine($"Max worker threads: {maxWorkerThreads} and Max IO threads: {maxIOThreads}");
+//ThreadPool.GetAvailableThreads(out var availableWorkerThreads, out var availableIOThreads);
+//Console.WriteLine($"Max worker threads: {availableWorkerThreads} and Max IO threads: {availableIOThreads}");
+//Console.WriteLine($"Max active threads = {maxWorkerThreads- availableWorkerThreads}");
+////ThreadPool.SetMinThreads(availableIOThreads);
+////ThreadPool.SetMaxThreads(maxWorkerThreads);
+//ThreadPool.QueueUserWorkItem(a, b);
+//Console.ReadLine();
+
+
+Queue<string?> requestQueue = new Queue<string?>();
+
+//2. Start the request monitoring thread
+Thread monitoringThread = new Thread(MonitorQueue);
+monitoringThread.Start();
+
+//1. Enqueue the requests
+Console.WriteLine("Server is running. Type 'exit' to stop.");
+while (true)
+{
+    string? input = Console.ReadLine();
+    if (input?.ToLower() == "exit")
+    {
+        break;
+    }
+    //main thread
+    requestQueue.Enqueue(input);
+}
+
+void MonitorQueue()
+{
+    while (true)
+    {
+        if (requestQueue.Count > 0)
+        {
+            string? input = requestQueue.Dequeue();
+            // Processing thread
+            //Thread processingThread = new Thread(() => ProcessInput(input));
+            //processingThread.Start();
+            ThreadPool.QueueUserWorkItem(ProcessInput, input);
+        }
+        Thread.Sleep(100);
+    }
+}
+
+
+//3. Processing the requests
+void ProcessInput(object? input)
+{
+    // Simulate processing time
+    Thread.Sleep(2000);
+    Console.WriteLine($"Processed input: {input} Is ThreadPool Thread: {Thread.CurrentThread.IsThreadPoolThread}");
+}
+
+
+```
+
+## Exception Handling in Threads
+- Each Thread has its own callstack, exceptions here also bubble up but they are propagated to the calling thread
+- This is because each thread works independently 
+```c#
+
+Thread thread = null;
+try
+{
+
+    thread = new Thread(() =>
+    {
+        throw new InvalidOperationException("An error occured in this worker thread");
+    });
+
+ 
+}
+catch(Exception ex)
+{
+    Console.WriteLine(ex.ToString());
+}
+
+thread?.Start();
+thread?.Join();
+Console.ReadLine();
+```
+- In the above code, the exception never comes in the catch block. This is because the catch block is in the main thread (also the calling thread in this case)
+whereas the exception is in the new thread that we created. 
+- To handle this we need to use try catch within the thread itself.
+```c#
+Thread thread = null;
+try
+{
+
+    thread = new Thread(() =>
+    {
+       try
+        {
+            throw new InvalidOperationException("An error occured in this worker thread");
+        }
+        catch(Exception ex) {
+            Console.WriteLine(ex.ToString());
+        }
+    });
+
+ 
+}
+catch(Exception ex)
+{
+    Console.WriteLine(ex.ToString());
+}
+
+thread?.Start();
+thread?.Join();
+Console.ReadLine();
+```
+- However what if we multiple threads and each of them have their own exceptions , then how do we handle them gracefully.
+- Simple solution: use a shared resource like List<Exception> exceptions, then we can keep adding exceptions in this List
+- When we use Task object in TPL, it has its own built in way to handle exceptions but it is similar to using a shared resource like this:
+```c#
+
+//Thread thread = null;
+//try
+//{
+
+//    thread = new Thread(() =>
+//    {
+//       try
+//        {
+//            throw new InvalidOperationException("An error occured in this worker thread");
+//        }
+//        catch(Exception ex) {
+//            Console.WriteLine(ex.ToString());
+//        }
+//    });
+
+
+//}
+//catch(Exception ex)
+//{
+//    Console.WriteLine(ex.ToString());
+//}
+
+//thread?.Start();
+//thread?.Join();
+//Console.ReadLine();
+
+object lockExceptions = new object();
+List<Exception> exceptions = new List<Exception> ();
+Thread t1 = new Thread(Work);
+Thread t2 = new Thread(Work);
+
+t1.Start ();
+t2.Start ();
+
+t1.Join ();
+t2.Join ();
+
+foreach (Exception ex in exceptions)
+{
+    Console.WriteLine (ex.ToString ());
+}
+
+void Work()
+{
+    try
+    {
+        throw new InvalidOperationException($"An error occurred in Thread: {Thread.CurrentThread.ManagedThreadId}");
+    }
+    catch (Exception ex) {
+        lock (lockExceptions)
+        {
+            exceptions.Add(ex);
+        }
+    }
+}
+
+
+```
+
+## Task Based Asynchronous Programming  vs Multithreading programming
+- Difference between multi-threaded programming and asynchronous programming: 
+- They are essentially the same except that multithreading programming emphasizes on divide on conquer strategy. 
+- If we have a big task, then divide it into smaller tasks among different threads to finish it more quickly
+- On the other hand Task Based asynchronous programming emphasizes on offloading long running tasks to a different thread.
+- Multithreading programming also is used for CPU bound operations like games which use lot of CPU resources whereas async programming is more useful for I/O bound operations.
+- In async programming we just have to sit and wait for something to return. Mostly it is from a remote server or remote database, therefore it takes a long time. Thats why it is called an I/O bound operation
+- It doesn't take much CPU but it is remote and it is a hardware device so it takes time to complete. That is why we put in a different thread so that it runs asynchronously.
+
+## Syntax of a Task 
+- Two basic ways to create a Task
+```c#
+//First way
+Task task = new Task(Work);
+task.Start();
+
+//Second Way
+var t = Task.Run(Work);
+
+```
+
+## Task vs Thread
+- Task is a promise that we are going to get a task done somewhere in the future.
+- Thread is a basic programming unit of work that can run in the CPU 
+- Task most often uses threads to do something but it is not always necessary 
+- Task is a higher level abstraction over Thread 
+- Benefits of using Tasks:
+- ![alt text](image-24.png)
+
+## Task object uses ThreadPool by default.(One of the reasons why we prefer task over thread)
+
+```c#
+var t = Task.Run(Work);
+
+Console.ReadLine();
+void Work()
+{
+    Console.WriteLine($"I love programming! and is ThreadPool: {Thread.CurrentThread.IsThreadPoolThread}");
+}
+
+```
+- The above code returns isThreadPool: true 
+
+## Returning Result from Task 
+- ![alt text](image-25.png)
+  
+- Task returns a generic 
+```c#
+var t = Task.Run(Work);
+Console.WriteLine($"Result is {t.Result}");
+
+Console.ReadLine();
+int Work()
+{
+    Console.WriteLine($"I love programming! and is ThreadPool: {Thread.CurrentThread.IsThreadPoolThread}");
+    int result = 100;
+    return result;
+}
+
+```
+- Remember in thread we had to use a shared variable to return a result but in Task you can easily return results from Tasks 
+
+## Using Tasks instead of threads to calculate sum using Divide and Conquer strategy
+```c#
+int[] array = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+int SumSegment(int start, int end)
+{
+    int segmentSum = 0;
+    for (int i = start; i < end; i++)
+    {
+        Thread.Sleep(100);
+        segmentSum += array[i];
+    }
+    return segmentSum;
+}
+
+
+var startTime = DateTime.Now;
+int numOfThreads = 4;
+int segmentLength = array.Length / numOfThreads;
+Task<int>[] tasks = new Task<int>[numOfThreads];
+tasks[0] = Task.Run(() => { return SumSegment(0, segmentLength); });
+tasks[1] = Task.Run(() => { return SumSegment(segmentLength, 2 * segmentLength); });
+tasks[2] = Task.Run(() => { return SumSegment(2 * segmentLength, 3 * segmentLength); });
+tasks[3] = Task.Run(() => { return SumSegment(3 * segmentLength, array.Length); });
+
+//foreach (int i in array)
+//{
+//    Thread.Sleep(100);
+//    sum += i;
+//}
+
+//foreach (var thread in threads)
+//{
+//    thread.Start();
+//}
+
+//foreach (var thread in threads)
+//{
+//    thread.Join();
+//}
+
+
+//Console.WriteLine(sum);
+//Console.WriteLine($"The sum is {tasks[0].Result + tasks[1].Result + tasks[2].Result + tasks[3].Result }");
+Console.WriteLine($"The sum is {tasks.Sum(x=>x.Result)}");  
+var endTime = DateTime.Now;
+var timespan = endTime - startTime;
+
+Console.WriteLine($"Time taken = {timespan.TotalMilliseconds}");
+Console.ReadLine();
+
+```
+
+## Task Continuation - Wait, WaitAll, Result 
+- In a task we need to know when a task would be done.
+- In Tasks, Wait and WaitAll are similar to thread.Join(). 
+- They will block unit the task is finished and will make the program synchronous instead of asynchronous.
+```c#
+int sum = 0;
+var task = Task.Run(() => {
+    for (int i = 0; i < 100; i++)
+    {
+        Task.Delay(100);//analogous to Thread.Sleep
+        sum += i;
+    }
+});
+
+//Block the program to wait for the tasks to finish
+task.Wait();//will wait for the task to finish. Analogous to thread.Join() 
+Task.WaitAll(task1, task2, task3); // we can pass a task array also. Will wait for all these specified tasks to finish
+
+Console.WriteLine($"The result is {sum}");
+Console.ReadLine();
+```
+- Please note task.Result is similar to task.Wait()
+- This is blocking and will block the main thread till the task is finished
+```c#
+var task = Task.Run(() => {
+    int sum = 0;
+    for (int i = 0; i < 100; i++)
+    {
+        Task.Delay(100);//analogous to Thread.Sleep
+        sum += i;
+    }
+    return sum;
+});
+
+//Block the program to wait for the tasks to finish
+//task.Wait();//will wait for the task to finish. Analogous to thread.Join() 
+//Task.WaitAll(task1, task2, task3); // we can pass a task array also. Will wait for all these specified tasks to finish
+
+var result = task.Result;//This line is blocking. Wait block the current thread till the task is finished
+
+Console.WriteLine($"The result is {task.Result}");
+Console.ReadLine();
+
+```
+
+## Task Continuation ContinueWith
+- We know that task.Result is a blocking call, it will pause the program execution till the task has completed doing its work.
+- If we want to start another task after the previous task is done and we dont want to block the main thread then we use Task.ContinueWith
+```c#
+using var client = new HttpClient();
+var task = client.GetStringAsync("https://pokeapi.co/api/v2/pokemon");
+task.ContinueWith(r => {
+    var result = r.Result;
+    Console.WriteLine(result);
+    Console.WriteLine("Done");
+});
+
+Console.WriteLine("Waiting for data to come inside");
+
+Console.ReadLine();
+```
+- Output of above program is:
+- ![alt text](image-26.png)
+
+- We can chain various tasks like this
+```c#
+using System.Text.Json;
+
+using var client = new HttpClient();
+var task = client.GetStringAsync("https://pokeapi.co/api/v2/pokemon");
+task.ContinueWith(r => {
+    var result = r.Result;
+    var doc = JsonDocument.Parse(result);
+    JsonElement root = doc.RootElement;
+    JsonElement results = root.GetProperty("results");
+    JsonElement pokemon = results[0];
+   
+    Console.WriteLine($"First pokemon name is :{pokemon.GetProperty("name")}");
+});
+
+Console.WriteLine("Waiting for data to come inside");
+
+Console.ReadLine();
+```
+
+## Task Continuation: WhenAll and WhenAny
+- Task.WhenAll is a method in C# that is used to create a task that will complete when all of the supplied tasks have completed.
+-  It's particularly useful when you want to run multiple asynchronous operations concurrently and wait for all of them to finish before proceeding.
+-  Remember the example above where we calculate the sum using an array of tasks
+-  In that code we had this line
+```c#
+int[] array = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+int SumSegment(int start, int end)
+{
+    int segmentSum = 0;
+    for (int i = start; i < end; i++)
+    {
+        Thread.Sleep(100);
+        segmentSum += array[i];
+    }
+    return segmentSum;
+}
+
+
+var startTime = DateTime.Now;
+int numOfThreads = 4;
+int segmentLength = array.Length / numOfThreads;
+Task<int>[] tasks = new Task<int>[numOfThreads];
+tasks[0] = Task.Run(() => { return SumSegment(0, segmentLength); });
+tasks[1] = Task.Run(() => { return SumSegment(segmentLength, 2 * segmentLength); });
+tasks[2] = Task.Run(() => { return SumSegment(2 * segmentLength, 3 * segmentLength); });
+tasks[3] = Task.Run(() => { return SumSegment(3 * segmentLength, array.Length); });
+
+
+Console.WriteLine($"The sum is {tasks.Sum(x=>x.Result)}");  //This line is blocking
+```
+- Please note, the above line is blocking
+- If we want for the summation after all the tasks are done with work we can use Task.WhenAll like this
+```c#
+Task.WhenAll(tasks).ContinueWith(t =>
+{
+    Console.WriteLine($"The summary is {t.Result.Sum()}");
+});
+
+Console.WriteLine("This is the end of the program");
+
+```
+
+### Benefits of Using Task.WhenAll:
+- Simplicity: It simplifies code when you need to wait for multiple tasks to complete.
+- Efficiency: It leverages the power of asynchronous programming to run tasks concurrently, improving performance.
+- Error Aggregation: It provides a straightforward way to handle multiple exceptions from concurrent tasks.
+
+### Tasks.WhenAny: When any of the tasks finish and not all of them
+- Task.WhenAny is a method in C# that creates a task which completes when any one of the provided tasks completes.
+-  It's useful when you want to proceed as soon as the first task finishes, regardless of the status of other tasks.
+```c#
+using System;
+using System.Threading.Tasks;
+
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        Task<int> task1 = Task.Run(() => SimulateWork(1, 3000));
+        Task<int> task2 = Task.Run(() => SimulateWork(2, 1000));
+        Task<int> task3 = Task.Run(() => SimulateWork(3, 2000));
+
+        // Wait for any task to complete
+        Task<int> completedTask = await Task.WhenAny(task1, task2, task3);
+        
+        // Get the result of the completed task
+        int result = await completedTask;
+        
+        Console.WriteLine($"Task {result} completed first.");
+    }
+
+    static int SimulateWork(int taskId, int delay)
+    {
+        Console.WriteLine($"Task {taskId} is starting and will take {delay} milliseconds.");
+        Task.Delay(delay).Wait(); // Simulate work with a delay
+        Console.WriteLine($"Task {taskId} has completed.");
+        return taskId;
+    }
+}
+
+
+```
+
+### Benefits of Using Task.WhenAny:
+- Efficiency: Allows you to proceed as soon as the first task is done, which can be particularly useful in scenarios where you need the result quickly.
+- Versatility: Can be used for implementing timeout mechanisms by combining with a task that completes after a delay.
+- Simplified Code: Reduces complexity in managing multiple tasks by handling the completion of any one task seamlessly.
+
+## Task Continuation Chain
+- ![alt text](image-27.png)
+- Assigment:
+- ![alt text](image-28.png)
+- We use the Unwrap method
+- Task.Unwrap is a method in C# that is used to simplify handling nested tasks. When you have a task that returns another task, 
+- Task.Unwrap flattens it into a single task, making it easier to work with.
+- Flattening Nested Tasks: Converts a task that returns another task (Task<Task<T>>) into a single task (Task<T>).
+- Simplified Awaiting: Makes it simpler to await the completion of the nested task without additional nesting.
+```c#
+using System.Text.Json;
+
+using var client = new HttpClient();
+var taskListJson = client.GetStringAsync("https://pokeapi.co/api/v2/pokemon");
+var taskGetFirstUrl =  taskListJson.ContinueWith(r => {
+    var result = r.Result;
+    var doc = JsonDocument.Parse(result);
+    JsonElement root = doc.RootElement;
+    JsonElement results = root.GetProperty("results");
+    JsonElement pokemon = results[0];
+
+    //Console.WriteLine($"First pokemon name is :{pokemon.GetProperty("name")}");
+    // Console.WriteLine($"First pokemon url is :{pokemon.GetProperty("url")}");
+    return pokemon.GetProperty("url").ToString();
+});
+var taskGetDetailsJson = taskGetFirstUrl.ContinueWith(r =>
+{
+    var result = r.Result;
+    return client.GetStringAsync(result);
+}).Unwrap();
+
+taskGetDetailsJson.ContinueWith(r =>
+{
+    var result = r.Result;
+    var doc = JsonDocument.Parse(result);
+    JsonElement root = doc.RootElement;
+    Console.WriteLine($"Name: {root.GetProperty("name").ToString()}");
+    Console.WriteLine($"Weight: {root.GetProperty("weight").ToString()}");
+    Console.WriteLine($"Height: {root.GetProperty("height").ToString()}");
+
+});
+
+Console.WriteLine("Waiting for data to come inside");
+
+Console.ReadLine();
+
+
+```
+

@@ -33,6 +33,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorThreadAffinity", "..\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeadlockExample", "..\DeadlockExample\DeadlockExample.csproj", "{16BE0D88-42DA-407C-A8C5-DD8DE3166B3B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThreadWait", "..\ThreadWait\ThreadWait.csproj", "{28C6B80A-0CC6-4EAC-BEB2-D8F8B31395E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThreadPool", "..\ThreadPool\ThreadPool.csproj", "{172BDBFB-3A28-4CA7-8543-0E2F6B25BFD1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExceptionHandlingThreads", "..\ExceptionHandlingThreads\ExceptionHandlingThreads.csproj", "{C5600B43-0C42-475C-AD6B-B40940C70EE8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskBasedProgramming", "..\TaskBasedProgramming\TaskBasedProgramming.csproj", "{53D8361B-3698-4B1E-96A5-18C502B83931}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskWaitWaitAllContinuation", "..\TaskWaitWaitAllContinuation\TaskWaitWaitAllContinuation.csproj", "{E0D7E2A4-A1C9-4307-B9D2-7112DCC4D182}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,6 +109,26 @@ Global
 		{16BE0D88-42DA-407C-A8C5-DD8DE3166B3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16BE0D88-42DA-407C-A8C5-DD8DE3166B3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16BE0D88-42DA-407C-A8C5-DD8DE3166B3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28C6B80A-0CC6-4EAC-BEB2-D8F8B31395E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28C6B80A-0CC6-4EAC-BEB2-D8F8B31395E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28C6B80A-0CC6-4EAC-BEB2-D8F8B31395E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28C6B80A-0CC6-4EAC-BEB2-D8F8B31395E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{172BDBFB-3A28-4CA7-8543-0E2F6B25BFD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{172BDBFB-3A28-4CA7-8543-0E2F6B25BFD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{172BDBFB-3A28-4CA7-8543-0E2F6B25BFD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{172BDBFB-3A28-4CA7-8543-0E2F6B25BFD1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5600B43-0C42-475C-AD6B-B40940C70EE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5600B43-0C42-475C-AD6B-B40940C70EE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5600B43-0C42-475C-AD6B-B40940C70EE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5600B43-0C42-475C-AD6B-B40940C70EE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53D8361B-3698-4B1E-96A5-18C502B83931}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53D8361B-3698-4B1E-96A5-18C502B83931}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53D8361B-3698-4B1E-96A5-18C502B83931}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53D8361B-3698-4B1E-96A5-18C502B83931}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0D7E2A4-A1C9-4307-B9D2-7112DCC4D182}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0D7E2A4-A1C9-4307-B9D2-7112DCC4D182}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0D7E2A4-A1C9-4307-B9D2-7112DCC4D182}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0D7E2A4-A1C9-4307-B9D2-7112DCC4D182}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
