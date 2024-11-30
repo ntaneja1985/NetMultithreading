@@ -23,25 +23,31 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReaderWriterLock", "..\Read
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SemaphoreLimitNumberOfThreads", "..\SemaphoreLimitNumberOfThreads\SemaphoreLimitNumberOfThreads.csproj", "{F4C72FC5-87C0-4E03-8292-495D1BC29136}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignallingAutoResetEvent", "..\SignallingAutoResetEvent\SignallingAutoResetEvent.csproj", "{4C5F95F9-F2EA-4225-9C48-0E1B8F5D5C3D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignallingAutoResetEvent", "..\SignallingAutoResetEvent\SignallingAutoResetEvent.csproj", "{4C5F95F9-F2EA-4225-9C48-0E1B8F5D5C3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManualResetEventReleaseMultipleThreads", "..\ManualResetEventReleaseMultipleThreads\ManualResetEventReleaseMultipleThreads.csproj", "{C391C27C-7C11-42FA-AB39-B96875DA0A29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManualResetEventReleaseMultipleThreads", "..\ManualResetEventReleaseMultipleThreads\ManualResetEventReleaseMultipleThreads.csproj", "{C391C27C-7C11-42FA-AB39-B96875DA0A29}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwoWaySignallingManualResetEvent", "..\TwoWaySignallingManualResetEvent\TwoWaySignallingManualResetEvent.csproj", "{01B223E0-2CA5-40E3-A552-E8ABEDD87195}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwoWaySignallingManualResetEvent", "..\TwoWaySignallingManualResetEvent\TwoWaySignallingManualResetEvent.csproj", "{01B223E0-2CA5-40E3-A552-E8ABEDD87195}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorThreadAffinity", "..\BlazorThreadAffinity\BlazorThreadAffinity.csproj", "{A41FBBEB-10F0-4FED-8009-9C559C611BD5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorThreadAffinity", "..\BlazorThreadAffinity\BlazorThreadAffinity.csproj", "{A41FBBEB-10F0-4FED-8009-9C559C611BD5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeadlockExample", "..\DeadlockExample\DeadlockExample.csproj", "{16BE0D88-42DA-407C-A8C5-DD8DE3166B3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeadlockExample", "..\DeadlockExample\DeadlockExample.csproj", "{16BE0D88-42DA-407C-A8C5-DD8DE3166B3B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThreadWait", "..\ThreadWait\ThreadWait.csproj", "{28C6B80A-0CC6-4EAC-BEB2-D8F8B31395E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThreadWait", "..\ThreadWait\ThreadWait.csproj", "{28C6B80A-0CC6-4EAC-BEB2-D8F8B31395E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThreadPool", "..\ThreadPool\ThreadPool.csproj", "{172BDBFB-3A28-4CA7-8543-0E2F6B25BFD1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThreadPool", "..\ThreadPool\ThreadPool.csproj", "{172BDBFB-3A28-4CA7-8543-0E2F6B25BFD1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExceptionHandlingThreads", "..\ExceptionHandlingThreads\ExceptionHandlingThreads.csproj", "{C5600B43-0C42-475C-AD6B-B40940C70EE8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExceptionHandlingThreads", "..\ExceptionHandlingThreads\ExceptionHandlingThreads.csproj", "{C5600B43-0C42-475C-AD6B-B40940C70EE8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskBasedProgramming", "..\TaskBasedProgramming\TaskBasedProgramming.csproj", "{53D8361B-3698-4B1E-96A5-18C502B83931}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskBasedProgramming", "..\TaskBasedProgramming\TaskBasedProgramming.csproj", "{53D8361B-3698-4B1E-96A5-18C502B83931}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskWaitWaitAllContinuation", "..\TaskWaitWaitAllContinuation\TaskWaitWaitAllContinuation.csproj", "{E0D7E2A4-A1C9-4307-B9D2-7112DCC4D182}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskWaitWaitAllContinuation", "..\TaskWaitWaitAllContinuation\TaskWaitWaitAllContinuation.csproj", "{E0D7E2A4-A1C9-4307-B9D2-7112DCC4D182}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskExceptions", "..\TaskExceptions\TaskExceptions.csproj", "{BE738804-BF30-49CD-89FE-C131FB721BFA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskSynchronization", "..\TaskSynchronization\TaskSynchronization.csproj", "{61F6F914-B3A6-4E00-8E65-C3E2CE569443}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskCancellation", "..\TaskCancellation\TaskCancellation.csproj", "{8E79F911-C4D1-4A19-A67B-00D181989FE8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -129,6 +135,18 @@ Global
 		{E0D7E2A4-A1C9-4307-B9D2-7112DCC4D182}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E0D7E2A4-A1C9-4307-B9D2-7112DCC4D182}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0D7E2A4-A1C9-4307-B9D2-7112DCC4D182}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE738804-BF30-49CD-89FE-C131FB721BFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE738804-BF30-49CD-89FE-C131FB721BFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE738804-BF30-49CD-89FE-C131FB721BFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE738804-BF30-49CD-89FE-C131FB721BFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61F6F914-B3A6-4E00-8E65-C3E2CE569443}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61F6F914-B3A6-4E00-8E65-C3E2CE569443}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61F6F914-B3A6-4E00-8E65-C3E2CE569443}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61F6F914-B3A6-4E00-8E65-C3E2CE569443}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E79F911-C4D1-4A19-A67B-00D181989FE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E79F911-C4D1-4A19-A67B-00D181989FE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E79F911-C4D1-4A19-A67B-00D181989FE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E79F911-C4D1-4A19-A67B-00D181989FE8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

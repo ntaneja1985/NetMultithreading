@@ -20,10 +20,20 @@
 
 using System.Text.Json;
 
-using var client = new HttpClient();
-var taskListJson = client.GetStringAsync("https://pokeapi.co/api/v2/pokemon");
+    using var client = new HttpClient();
+    var taskListJson = client.GetStringAsync("https://pokeapi123.co/api/v2/pokemon");
+    
+
 var taskGetFirstUrl =  taskListJson.ContinueWith(r => {
+    if (taskListJson.IsFaulted && taskListJson.Exception != null)
+    {
+        foreach (var ex in taskListJson.Exception.InnerExceptions)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
     var result = r.Result;
+    Console.WriteLine(taskListJson.Status);
     var doc = JsonDocument.Parse(result);
     JsonElement root = doc.RootElement;
     JsonElement results = root.GetProperty("results");
@@ -41,6 +51,7 @@ var taskGetDetailsJson = taskGetFirstUrl.ContinueWith(r =>
 
 taskGetDetailsJson.ContinueWith(r =>
 {
+    
     var result = r.Result;
     var doc = JsonDocument.Parse(result);
     JsonElement root = doc.RootElement;

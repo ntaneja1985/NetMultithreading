@@ -1842,6 +1842,7 @@ class Program
 - ![alt text](image-27.png)
 - Assigment:
 - ![alt text](image-28.png)
+- We have a task of a task of a task of a task of something.
 - We use the Unwrap method
 - Task.Unwrap is a method in C# that is used to simplify handling nested tasks. When you have a task that returns another task, 
 - Task.Unwrap flattens it into a single task, making it easier to work with.
@@ -1886,4 +1887,157 @@ Console.ReadLine();
 
 
 ```
+
+## Exception Handling in Tasks
+1. Exceptions of Tasks is usually hidden
+2. Using try catch doesnot work
+3. Exceptions are stored in the task itself
+```C#
+Console.WriteLine(taskListJson.Status);
+
+```
+- ![alt text](image-29.png)
+- Task Status is Faulted. 
+- Task stores the exception inside it. 
+- We can iterate over exceptions in tasks
+```c#
+ if (taskListJson.IsFaulted && taskListJson.Exception != null)
+ {
+     foreach (var ex in taskListJson.Exception.InnerExceptions)
+     {
+         Console.WriteLine(ex.Message);
+     }
+ }
+```
+-![alt text](image-30.png)
+- Multiple exceptions can be stored inside a task and we can iterate over them
+```c#
+var tasks = new[]
+{
+    Task.Run(() =>
+    {
+        throw new InvalidOperationException("Invalid Operation");
+    }),
+     Task.Run(() =>
+    {
+        throw new ArgumentNullException("Argument Null");
+    }),
+     Task.Run(() =>
+    {
+        throw new Exception("General Exception");
+    })
+};
+
+Task.WhenAll(tasks).ContinueWith(t =>
+{
+    if (t.IsFaulted && t.Exception != null)
+    {
+        foreach (var ex in t.Exception.InnerExceptions)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+}
+    );
+
+Console.WriteLine("Press any key to exit");
+Console.ReadLine();
+
+
+
+```
+- Using wait or result will make the stored exception to throw 
+  ```c#
+    var t = Task.WhenAll(tasks);
+    t.Wait(); //throws the AggregateExceptions which has all inner exceptions
+    t.Result
+
+  ```
+  - In the Task.ContinueWith method we can also define TaskContinuationOptions like this
+  ```c#
+    Task.WhenAll(tasks).ContinueWith(t =>
+    {
+    if (t.IsFaulted && t.Exception != null)
+    {
+        foreach (var ex in t.Exception.InnerExceptions)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+    }, TaskContinuationOptions.NotOnFaulted //If task is faulted, dont continue
+    );
+  ```
+  - So if this method encounters exceptions, we can configure options of what to do if there is an error.
+ - We can use await keyword also to get the first exception within the aggregate exception.
+ - Similar to task.Wait() except that here we just get the first exception whereas in task.Wait() we get Aggregate Exception.
+```c#
+ var result = await client.GetStringAsync("https://pokeapi123.co/api/v2/pokemon");
+ 
+```
+
+## Task Synchronization
+- Similar to thread synchronization (locks, mutexes, semaphores)
+
+
+## Task Cancellation
+- In .NET, task cancellation is primarily done using the CancellationToken and CancellationTokenSource classes.
+- Cancelling tasks that are no longer needed can free up system resources, like memory and CPU, which can then be used by other processes or tasks. 
+- This is especially crucial in environments with limited resources or in applications that need to handle a large number of tasks simultaneously.
+- These provide a way to cancel asynchronous operations gracefully.
+```c#
+ bool cancelThread = false;
+
+using var cts = new CancellationTokenSource();
+var token = cts.Token;
+var task = Task.Run(Work, token);
+
+
+Console.WriteLine("To cancel press 'c'");
+
+var input = Console.ReadLine();
+if (input.ToLower() == "c")
+{
+    cts.Cancel();
+}
+
+task.Wait();
+Console.WriteLine($"Task Status is {task.Status}");
+Console.ReadLine();
+void Work()
+{
+    Console.WriteLine("Started doing work");
+    for (int i = 0; i < 100000; i++)
+    {
+        Console.WriteLine($"{DateTime.Now}");
+        //if (cancelThread)
+        //{
+        //    Console.WriteLine($"User requested cancellation at iteration: {i}");
+        //    break;
+        //}
+        if (token.IsCancellationRequested)
+        {
+            Console.WriteLine($"User requested cancellation at iteration: {i}");
+            //break;
+            //throw new OperationCanceledException();
+            token.ThrowIfCancellationRequested();
+        }
+        Thread.SpinWait(30000000);
+    }
+    Console.WriteLine("Work is done");
+}
+```
+- We can also do CancelAfter like this and introduce a timeout
+```c#
+if (input.ToLower() == "c")
+{
+    cts.CancelAfter(1000);
+}
+
+```
+- CancelAfter is a method in the CancellationTokenSource class in .NET. It allows you to automatically cancel a token after a specified period. 
+- This can be useful for setting timeouts on tasks.
+
+
+
+
 
