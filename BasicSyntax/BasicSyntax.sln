@@ -43,11 +43,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskBasedProgramming", "..\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskWaitWaitAllContinuation", "..\TaskWaitWaitAllContinuation\TaskWaitWaitAllContinuation.csproj", "{E0D7E2A4-A1C9-4307-B9D2-7112DCC4D182}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskExceptions", "..\TaskExceptions\TaskExceptions.csproj", "{BE738804-BF30-49CD-89FE-C131FB721BFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskExceptions", "..\TaskExceptions\TaskExceptions.csproj", "{BE738804-BF30-49CD-89FE-C131FB721BFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskSynchronization", "..\TaskSynchronization\TaskSynchronization.csproj", "{61F6F914-B3A6-4E00-8E65-C3E2CE569443}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskSynchronization", "..\TaskSynchronization\TaskSynchronization.csproj", "{61F6F914-B3A6-4E00-8E65-C3E2CE569443}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskCancellation", "..\TaskCancellation\TaskCancellation.csproj", "{8E79F911-C4D1-4A19-A67B-00D181989FE8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskCancellation", "..\TaskCancellation\TaskCancellation.csproj", "{8E79F911-C4D1-4A19-A67B-00D181989FE8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsynAwait", "..\AsynAwait\AsynAwait.csproj", "{F0FAF3E0-0931-439B-8C5A-BBC2E73BD9EC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsyncAwaitSyntax", "..\AsyncAwaitSyntax\AsyncAwaitSyntax.csproj", "{9641B189-2341-4908-9258-0A3E3636894C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskContinuationAsyncAwait", "..\TaskContinuationAsyncAwait\TaskContinuationAsyncAwait.csproj", "{A3200B17-07AB-417F-BC8F-9F393B1614DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExceptionHandlingAsyncAwait", "..\ExceptionHandlingAsyncAwait\ExceptionHandlingAsyncAwait.csproj", "{55F87468-540A-447A-9B9D-0D09FAF18E58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsyncAwaitSynchronizationContext", "..\AsyncAwaitSynchronizationContext\AsyncAwaitSynchronizationContext.csproj", "{852507F8-E352-435E-84B3-8FBB43B4268D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -147,6 +157,26 @@ Global
 		{8E79F911-C4D1-4A19-A67B-00D181989FE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E79F911-C4D1-4A19-A67B-00D181989FE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8E79F911-C4D1-4A19-A67B-00D181989FE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0FAF3E0-0931-439B-8C5A-BBC2E73BD9EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0FAF3E0-0931-439B-8C5A-BBC2E73BD9EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0FAF3E0-0931-439B-8C5A-BBC2E73BD9EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0FAF3E0-0931-439B-8C5A-BBC2E73BD9EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9641B189-2341-4908-9258-0A3E3636894C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9641B189-2341-4908-9258-0A3E3636894C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9641B189-2341-4908-9258-0A3E3636894C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9641B189-2341-4908-9258-0A3E3636894C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3200B17-07AB-417F-BC8F-9F393B1614DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3200B17-07AB-417F-BC8F-9F393B1614DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3200B17-07AB-417F-BC8F-9F393B1614DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3200B17-07AB-417F-BC8F-9F393B1614DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55F87468-540A-447A-9B9D-0D09FAF18E58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55F87468-540A-447A-9B9D-0D09FAF18E58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55F87468-540A-447A-9B9D-0D09FAF18E58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55F87468-540A-447A-9B9D-0D09FAF18E58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{852507F8-E352-435E-84B3-8FBB43B4268D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{852507F8-E352-435E-84B3-8FBB43B4268D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{852507F8-E352-435E-84B3-8FBB43B4268D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{852507F8-E352-435E-84B3-8FBB43B4268D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2038,6 +2038,253 @@ if (input.ToLower() == "c")
 - This can be useful for setting timeouts on tasks.
 
 
+## Overview of Async and Await
+- Task based asynchronous programming.
+- In Task.ContinueWith we write everything in a lambda expression.
+- Now we use async await
+- Everything after the await keyword is considered continuation
+- Therefore everything looks like it is running synchronously but it is not
+- When we put everything inside a method we know that it is running asynchronously.
+```c#
+OutputFirstPokemon();
+Console.WriteLine("This is the end of the program");
+Console.ReadLine();
 
+async void OutputFirstPokemon()
+{
+    using var client = new HttpClient();
+    var taskGetPokemonList = client.GetStringAsync("https://pokeapi.co/api/v2/pokemon");
+    //var result = taskGetPokemonList.Result; //blocking call
 
+    var result = await taskGetPokemonList;
 
+    var doc = JsonDocument.Parse(result);
+    JsonElement root = doc.RootElement;
+    JsonElement results = root.GetProperty("results");
+    JsonElement pokemon = results[0];
+
+    Console.WriteLine($"First pokemon name is :{pokemon.GetProperty("name")}");
+    Console.WriteLine($"First pokemon url is :{pokemon.GetProperty("url")}");
+}
+
+```
+- The above code will print the end of the program first and then it will show the results 
+- ![alt text](image-31.png)
+- Everything after the await keyword is considered continuation. When the program runs to await keyword, the calling thread is immediately released, so it is free to do other things.
+- When we use the await keyword it returns a value
+- Alternative to await keyword is Task.Result
+- When we use await keyword, it throws the first exception in the AggregateException list.
+- async and await are used to help us manage the synchronization context. No need to use the Invoke() method.
+
+## Basic syntax of async and await
+- ![alt text](image-32.png)
+```c#
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        Console.WriteLine("Starting work");
+        await WorkAsync();
+        Console.WriteLine("Press enter to exit");
+        Console.ReadLine();
+    }
+
+    static async Task WorkAsync()
+    {
+        await Task.Delay(2000);
+        Console.WriteLine("Work is done");
+    }
+}
+
+```
+- ![alt text](image-33.png)
+```c#
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        Console.WriteLine("Starting work");
+        var data = await FetchDataAsync();
+        Console.WriteLine($"Data is being fetched: {data}");
+        Console.WriteLine($"Press enter to exit");
+        Console.ReadLine();
+    }
+
+    static async Task<string> FetchDataAsync()
+    {
+        await Task.Delay(2000);
+        return "Complex Data";
+    }
+}
+
+```
+
+## Which thread is used
+- Consider the following code:
+```c#
+ class Program
+{
+    static async Task Main(string[] args)
+    {
+        Console.WriteLine($"Main Thread Id is {Thread.CurrentThread.ManagedThreadId}");
+        Console.WriteLine("Starting work");
+        var data = await FetchDataAsync();
+        Console.WriteLine($"Data is fetch: {data}");
+        Console.WriteLine($"Thread Id after await is {Thread.CurrentThread.ManagedThreadId}");
+        Console.WriteLine($"Press enter to exit");
+        Console.ReadLine();
+    }
+
+    static async Task<string> FetchDataAsync()
+    {
+        Console.WriteLine($"Fetch Data Task Thread Id is {Thread.CurrentThread.ManagedThreadId}");
+        await Task.Delay(2000);
+        Console.WriteLine($"Fetch Data Task After Delay Thread Id is {Thread.CurrentThread.ManagedThreadId}");
+        return "Complex Data";
+    }
+}
+
+```
+- We have the following output for the above code:
+- ![alt text](image-34.png)
+- Please note when the initial await is called, code goes inside the Fetch Data Async function and it is still running on the same thread as the calling thread which is the main thread here
+- After that we have an await Task.Delay, now this may execute on a different thread depending on thread pool
+- Threadpool may decide to reuse a previous thread in this case.
+- Everything after await keyword is a different continuation(Task.ContinueWith)
+- We can have async methods to start on the calling thread and they can continue on different threads to optimize resource usage.
+- Everything after await keyword may execute on a different thread to optimize resource usage and performance.
+
+## Continuation after return value
+- Await keyword has 2 features: one is it returns us the result after the task is finished, so we can use it in the continuation
+- Everything after await keyword is a continuation. 
+- This is much more simpler than using Task.ContinueWith which can be very complicated if we have a long chain of tasks
+- Consider the code:
+```c#
+ using System.Text.Json;
+
+using var client = new HttpClient();
+Console.WriteLine($"Main Thread Id is {Thread.CurrentThread.ManagedThreadId}");
+var pokemonListJson = await client.GetStringAsync("https://pokeapi.co/api/v2/pokemon");
+Console.WriteLine($"Thread Id After Pokemon List is {Thread.CurrentThread.ManagedThreadId}");
+//Get the first pokemon's url
+
+var doc = JsonDocument.Parse(pokemonListJson);
+JsonElement root = doc.RootElement;
+JsonElement results = root.GetProperty("results");
+JsonElement pokemon = results[0];
+var url = pokemon.GetProperty("url").ToString();
+
+//Get first pokemon details
+Console.WriteLine($"Thread Id Before Pokemon Details is {Thread.CurrentThread.ManagedThreadId}");
+var firstPokemonDetailsJson = await client.GetStringAsync(url);
+Console.WriteLine($"Thread Id After Pokemon Details is {Thread.CurrentThread.ManagedThreadId}");
+
+//Get the weight and height
+var doc2 = JsonDocument.Parse(firstPokemonDetailsJson);
+JsonElement root2 = doc2.RootElement;
+Console.WriteLine($"Name: {root2.GetProperty("name").ToString()}");
+Console.WriteLine($"Weight: {root2.GetProperty("weight").ToString()}");
+Console.WriteLine($"Height: {root2.GetProperty("height").ToString()}");
+
+Console.WriteLine($"Thread Id before finishing is {Thread.CurrentThread.ManagedThreadId}");
+Console.WriteLine("Waiting for data to come inside");
+
+Console.ReadLine();
+
+```
+- This gives us the following result:
+- ![alt text](image-35.png)
+  
+
+## Exception Handling with Async and Await
+- Please note the exceptions inside tasks are hidden.
+- They should be thrown. 
+- Remember earlier when we had a bunch of tasks through exceptions we had to use Task.ContinueWith and then iterate through AggregateException List 
+- But await keyword throws the exception
+- await Task.WhenAll(tasks) will throw the first exception it encounters. 
+
+## Await and Thread Synchronization Context.
+- Remember the Windows Form application issue with 2 buttons and we had separate threads to handle button clicks.
+- For the lblMessage we had to use the Invoke() method for thread synchronization because lblMessage was created on the UI Thread and worker threads were trying to modify it.
+- We know everything after await keyword runs on a different thread.
+- However await keyword makes everything run on the same context. 
+- In await we dont have to worry about synchronization context.
+- We can fix the winforms application with the following code:
+```c#
+  private async void button1_Click(object sender, EventArgs e)
+  {
+      await ShowMessage("First Message", 3000);
+  }
+
+  private async void button2_Click(object sender, EventArgs e)
+  {
+      await ShowMessage("Second Message", 4000);
+  }
+
+  private async Task ShowMessage(string message, int delay)
+  {
+      await Task.Delay(delay);
+      lblMessage.Text = message;
+
+  }
+
+```
+- await keyword does magic by putting all the context on the UI thread and we dont have to worry about thread affinity issue or Thread synchronization context issue
+- Similarly using async and await we can fix the Blazor application.
+
+## What does await do exactly
+- Await keyword is like magic
+- When the compiler sees the async and await keyword on a method, it creates a state machine.
+- A state machine is a special class that can be created to navigate between different states.
+- Consider the following code:
+```c#
+using System.Text.Json;
+
+using var client = new HttpClient();
+Console.WriteLine($"Main Thread Id is {Thread.CurrentThread.ManagedThreadId}");
+var pokemonListJson = await client.GetStringAsync("https://pokeapi.co/api/v2/pokemon");
+Console.WriteLine($"Thread Id After Pokemon List is {Thread.CurrentThread.ManagedThreadId}");
+//Get the first pokemon's url
+
+var doc = JsonDocument.Parse(pokemonListJson);
+JsonElement root = doc.RootElement;
+JsonElement results = root.GetProperty("results");
+JsonElement pokemon = results[0];
+var url = pokemon.GetProperty("url").ToString();
+
+//Get first pokemon details
+Console.WriteLine($"Thread Id Before Pokemon Details is {Thread.CurrentThread.ManagedThreadId}");
+var firstPokemonDetailsJson = await client.GetStringAsync(url);
+Console.WriteLine($"Thread Id After Pokemon Details is {Thread.CurrentThread.ManagedThreadId}");
+
+//Get the weight and height
+var doc2 = JsonDocument.Parse(firstPokemonDetailsJson);
+JsonElement root2 = doc2.RootElement;
+Console.WriteLine($"Name: {root2.GetProperty("name").ToString()}");
+Console.WriteLine($"Weight: {root2.GetProperty("weight").ToString()}");
+Console.WriteLine($"Height: {root2.GetProperty("height").ToString()}");
+
+Console.WriteLine($"Thread Id before finishing is {Thread.CurrentThread.ManagedThreadId}");
+Console.WriteLine("Waiting for data to come inside");
+
+Console.ReadLine();
+
+```
+- Here the compiler when it sees the above code it breaks it down into 3 different states 
+- Everything above the first await keyword (including the await keyword line) is first state
+- Everything after the first await keyword and before the second await keyword(including the await keyword line) is the second state
+- Everything after the second await keyword is the third state
+- StateMachine has different properties to remember the state machine variables and their values 
+- Everytime the compiler encounters the await keyword it captures the synchronization context.
+- It uses the captured synchronization context to run the next state.
+- Thats why we dont have synchronization context problems and no need to use the Invoke() method.
+- Behind the scenes, when the compiler encounters the await keyword, it transforms the asynchronous method into a state machine. 
+- This state machine manages the method's execution across different states, ensuring that it can pause and resume appropriately.
+- Here's a simplified view of what happens under the hood:
+- Initial State: The method starts executing until it hits an await keyword.
+- Await: The current state is saved, and the method returns a task to the caller.
+- Continuation: The method execution is paused, and control returns to the caller.
+- Task Completion: Once the awaited task completes, the state machine resumes execution from the saved state.
+- Enhances responsiveness, especially in GUI applications where blocking the main thread can lead to unresponsive interfaces.
+
+## Parallel Loops
