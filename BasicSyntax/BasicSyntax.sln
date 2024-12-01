@@ -53,11 +53,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsynAwait", "..\AsynAwait\A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsyncAwaitSyntax", "..\AsyncAwaitSyntax\AsyncAwaitSyntax.csproj", "{9641B189-2341-4908-9258-0A3E3636894C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskContinuationAsyncAwait", "..\TaskContinuationAsyncAwait\TaskContinuationAsyncAwait.csproj", "{A3200B17-07AB-417F-BC8F-9F393B1614DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskContinuationAsyncAwait", "..\TaskContinuationAsyncAwait\TaskContinuationAsyncAwait.csproj", "{A3200B17-07AB-417F-BC8F-9F393B1614DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExceptionHandlingAsyncAwait", "..\ExceptionHandlingAsyncAwait\ExceptionHandlingAsyncAwait.csproj", "{55F87468-540A-447A-9B9D-0D09FAF18E58}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExceptionHandlingAsyncAwait", "..\ExceptionHandlingAsyncAwait\ExceptionHandlingAsyncAwait.csproj", "{55F87468-540A-447A-9B9D-0D09FAF18E58}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsyncAwaitSynchronizationContext", "..\AsyncAwaitSynchronizationContext\AsyncAwaitSynchronizationContext.csproj", "{852507F8-E352-435E-84B3-8FBB43B4268D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsyncAwaitSynchronizationContext", "..\AsyncAwaitSynchronizationContext\AsyncAwaitSynchronizationContext.csproj", "{852507F8-E352-435E-84B3-8FBB43B4268D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParallelLoops", "..\ParallelLoops\ParallelLoops.csproj", "{4576954C-0D50-4004-8998-C87A5894AF8B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CancellationInParallelLoops", "..\CancellationInParallelLoops\CancellationInParallelLoops.csproj", "{93BA7402-DD74-4E04-81E2-0AE0416ED987}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -177,6 +181,14 @@ Global
 		{852507F8-E352-435E-84B3-8FBB43B4268D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{852507F8-E352-435E-84B3-8FBB43B4268D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{852507F8-E352-435E-84B3-8FBB43B4268D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4576954C-0D50-4004-8998-C87A5894AF8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4576954C-0D50-4004-8998-C87A5894AF8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4576954C-0D50-4004-8998-C87A5894AF8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4576954C-0D50-4004-8998-C87A5894AF8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93BA7402-DD74-4E04-81E2-0AE0416ED987}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93BA7402-DD74-4E04-81E2-0AE0416ED987}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93BA7402-DD74-4E04-81E2-0AE0416ED987}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93BA7402-DD74-4E04-81E2-0AE0416ED987}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

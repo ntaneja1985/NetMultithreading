@@ -2288,3 +2288,311 @@ Console.ReadLine();
 - Enhances responsiveness, especially in GUI applications where blocking the main thread can lead to unresponsive interfaces.
 
 ## Parallel Loops
+- Helps us with divide and conquer
+- Async and Await help us with offloading long running tasks, whereas parallel loops help us with divide and conquer
+- ![alt text](image-36.png)
+- ![alt text](image-37.png)
+- ![alt text](image-38.png)
+- With parallel loops we write multi-threading programming just as we write sequential programming, so things run concurrently.
+- Recommended approach by microsoft rather than using own threads. 
+```c#
+int[] array = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+
+int sum = 0;
+object lockSum = new object();
+//for(int i = 0; i < array.Length; i++)
+//{
+//    sum += array[i];
+//}
+
+//uses different threads
+Parallel.For(0,array.Length,i=>
+{
+    lock (lockSum)
+    {
+        sum += array[i];
+    }
+});
+
+Console.WriteLine($"Sum is {sum}");
+Console.ReadLine();
+
+//Here i is not the index, it represents the element
+Parallel.ForEach(array, i =>
+{
+    lock (lockSum)
+    {
+        sum += i;
+    }
+});
+Console.WriteLine($"Sum is {sum}");
+Console.ReadLine();
+
+//Takes an input array of delegates 
+Parallel.Invoke(() =>
+{
+    Console.WriteLine("I am one");
+}, () =>
+{
+    Console.WriteLine("I am two");
+});
+
+```
+
+## How parallel loops work
+- ![alt text](image-39.png)
+- **Data Partition**: Parallel loops is working with a collection of data, but instead of creating one thread at a time, it needs to determine how many threads it needs to create.
+- Therefore, it needs to partition data into different parts. Same as divide and conquer.
+- First step it does is that that it tries to **divide the collection into different chunks**.
+- By default it depends on number of CPU cores and logical CPU processors, but it could be way more complicated than that.
+- So microsoft tries to make the best decision to determine how many threads it should be there.
+- Depending on that number it divides the collection into different chunks.
+- Within that chunk it does a loop and uses the threads to do the summarization.
+- Also it uses the **thread pool threads**. 
+- All the above decisions are made by microsoft itself(whether to use threadpool or how to partition the data).
+- If we want more control, then we can revert back to the old method and make our own threads. 
+- Parallel.For or Parallel.ForEach is a blocking call. The next line after Parallel.For is executed after all the threads inside Parallel.For are finished executing.
+- It looks like it runs synchronously.
+```c#
+//uses different threads
+Parallel.For(0,array.Length,i=>
+{
+    lock (lockSum)
+    {
+        sum += array[i];
+        Console.WriteLine($"Current Task Id: {Task.CurrentId}; Is it a thread pool thread: {Thread.CurrentThread.IsThreadPoolThread}");
+    }
+});
+
+Console.WriteLine($"Sum is {sum}");
+Console.ReadLine();
+
+```
+
+## Exception Handling in Parallel Loops
+- In Threads and Tasks we have more granular control.
+- Parallel loops work with a collection of data. 
+- ![alt text](image-40.png)
+- Parallel loops run multiple threads right. When all the threads finish executing and there are exceptions in one more more threads, all exceptions are going to be aggregated together into Aggregate Exception
+- Since Parallel.For is a blocking call, so exception will be thrown
+```c#
+ Parallel.For(0, array.Length, i =>
+{
+    lock (lockSum)
+    {
+        if(i == 65)
+        {
+            throw new InvalidOperationException("This is on purpose");
+        }
+        sum += array[i];
+        Console.WriteLine($"Current Task Id: {Task.CurrentId}; Is it a thread pool thread: {Thread.CurrentThread.IsThreadPoolThread}");
+    }
+});
+
+```
+- What if a task inside a Parallel loop is taking a long time and it throws an exception.
+- Parallel Loop will not stop the execution of other threads,but as a developer we want to stop further execution of other threads also.
+- ![alt text](image-41.png)
+```c#
+try
+{
+
+    Parallel.For(0, array.Length, (i, state) =>
+    {
+        lock (lockSum)
+        {
+            if (!state.IsExceptional)
+            {
+                if (i == 65)
+                {
+                    throw new InvalidOperationException("This is on purpose");
+                }
+                sum += array[i];
+                Console.WriteLine($"Current Task Id: {Task.CurrentId}; Is it a thread pool thread: {Thread.CurrentThread.IsThreadPoolThread}");
+            }
+        }
+    });
+}
+catch(Exception ex)
+{ Console.WriteLine(ex.ToString()); }
+
+```
+
+## Stop Method
+- After calling the Stop Method no other new iterations should start.
+- ![alt text](image-42.png)
+- Similar to IsExceptional
+- It is more proactive and reactive compared to IsExceptional
+```c#
+ Parallel.For(0, array.Length, (i, state) =>
+ {
+     lock (lockSum)
+     {
+         if (!state.IsStopped)
+         {
+             if (i == 65)
+             {
+                 //throw new InvalidOperationException("This is on purpose");
+                 state.Stop();
+             }
+             sum += array[i];
+             Console.WriteLine($"Current Task Id: {Task.CurrentId}; Is it a thread pool thread: {Thread.CurrentThread.IsThreadPoolThread}");
+         }
+     }
+ });
+
+```
+
+## Break Method
+- Break is similar to stop method but has some differences also
+- It is proactive compared to exceptions which are reactive.
+- if we have come code like this:
+```c#
+Parallel.For(0, array.Length, (i, state) =>
+{
+    lock (lockSum)
+    {
+        if (!state.IsStopped)
+        {
+            if (i == 65)
+            {
+                //throw new InvalidOperationException("This is on purpose");
+                state.Break();
+            }
+            sum += array[i];
+            Console.WriteLine($"Current Task Id: {Task.CurrentId}; Is it a thread pool thread: {Thread.CurrentThread.IsThreadPoolThread}");
+        }
+    }
+});
+```
+- Break will try to stop all iterations greater than 65, but anything lower than that will be allowed to continue.
+- ![alt text](image-43.png)
+```c#
+ Parallel.For(0, array.Length, (i, state) =>
+ {
+     lock (lockSum)
+     {
+         if (state.ShouldExitCurrentIteration && state.LowestBreakIteration < i)
+             return;
+             
+         
+             if (i == 65)
+             {
+                 //throw new InvalidOperationException("This is on purpose");
+                 state.Break();
+             }
+             sum += array[i];
+             Console.WriteLine($"Current Task Id: {Task.CurrentId}; Is it a thread pool thread: {Thread.CurrentThread.IsThreadPoolThread}");
+         
+     }
+ });
+
+
+```
+- Note that state.Break() ensures that all currently running iterations finish, but no new iterations will start after the break is called.
+- If you need to stop the loop immediately and cancel all ongoing operations, you should use state.Stop() instead of state.Break().
+
+
+## Parallel Loop Result
+- ![alt text](image-44.png)
+- ![alt text](image-45.png)
+- We can use the Parallel Loop Result to know whether Parallel Loop has completed or not.
+- If there is a LowestBreakIteration specified then we know Break() was called else if it is NULL, then means Stop() was called.
+- If there is exception, then IsCompleted = false and lowest break iteration is null, similar to Stop() but it will go to catch block
+
+## Cancellation in Parallel Loops
+- We can pass Cancellation token within the Parallel Options like this
+```c#
+bool cancelThread = false;
+
+using var cts = new CancellationTokenSource();
+var token = cts.Token;
+
+var task = Task.Run(Work, token);
+
+
+Console.WriteLine("To cancel press 'c'");
+
+var input = Console.ReadLine();
+if (input.ToLower() == "c")
+{
+    //cts.CancelAfter(1000);
+    cts.Cancel();
+}
+
+task.Wait();
+Console.WriteLine($"Task Status is {task.Status}");
+Console.ReadLine();
+void Work()
+{
+    Console.WriteLine("Started doing work");
+    var options = new ParallelOptions { CancellationToken = cts.Token };
+    Parallel.For(0, 100000, options, i =>
+    {
+        Console.WriteLine($"{DateTime.Now}");
+        Thread.SpinWait(300000000);
+    });
+    Console.WriteLine("Work is done");
+
+
+}
+
+```
+- Parallel Loop throws aggregate exception so we can enclose it in try catch loop.
+
+## Thread Local Storage in Parallel Loops
+- ![alt text](image-46.png)
+- Similar to Divide and Conquer where we used local variables like sum1, sum2, sum3, sum4 etc.
+- Here also in Parallel loop for each thread we can use local variables and then finally aggregate them all together.
+- Benefit is that locking is expensive, so we will use the lock to protect the shared resource only once per thread when it has finished calculating sum of its segment.
+- If we had not used the local variable, then locking will be executed for each element and most of the resources are spent waiting for lock to be released.
+```c#
+ int[] array = Enumerable.Range(0,10).ToArray();
+
+int sum = 0;
+object lockSum = new object();
+
+ParallelLoopResult result;
+try
+{
+
+    result = Parallel.For(0,
+        array.Length,
+        //initial value of local storage, we can initialize it as Dictionary<string,string> also
+        () => 0,
+        (i,state,localStorage) =>
+    {
+                //Calculate and store sum of each segment into its own local variable (localStorage in this case)
+                localStorage += array[i];
+                Console.WriteLine($"Current Task Id: {Task.CurrentId}; Is it a thread pool thread: {Thread.CurrentThread.IsThreadPoolThread}");
+                return localStorage;
+    },
+    localStorage =>
+    {
+        //protect the shared resource. only called once per thread not for every iteration
+        lock (lockSum)
+        {
+            sum += localStorage;
+            Console.WriteLine($"The task Id is {Task.CurrentId}");
+        }
+    });
+}
+catch(Exception ex)
+{ Console.WriteLine(ex.ToString()); }
+
+Console.WriteLine($"Sum is {sum}");
+Console.ReadLine();
+
+```
+## Performance Considerations
+- When creating multiple threads, we utilize time and space.
+- Time is also spent in context switching between threads 
+- We also need to move things around in memory and cache.
+- Not every situation is good for using Parallel Loops
+- For simple operations it is not very efficient.
+- For complex iterations, Parallel loops make more sense
+- If we have a huge loop and if each iteration takes time use Parallel Loops else use regular loops
+
+
+
+## PLINQ
