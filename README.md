@@ -2596,3 +2596,293 @@ Console.ReadLine();
 
 
 ## PLINQ
+- When we use regular LINQ and when we work with collection of data and the work we want to do for each element is a lot, we might want to do in a concurrent fashion.
+- This is where PLINQ comes in.
+- We can use AsParallel() on the collection
+- It works similar to Parallel Loop and it will divide each iteration into multiple chunks and it will give the results much faster.
+```c#
+var items = Enumerable.Range(1, 20);
+
+var evenNumbers = items.AsParallel().AsOrdered().Where(x=>
+{
+    Console.WriteLine($"Processing number {x}");
+    Console.WriteLine($"Current task Id is {Task.CurrentId}" );
+    return (x % 2 == 0);
+});
+
+Console.WriteLine($"There are {evenNumbers.Count()} even numbers in the collection");
+
+foreach( var item in evenNumbers )
+{
+    Console.WriteLine(item);
+}
+
+Console.ReadLine();
+
+```
+- If we want to output the result as ordered, use AsOrdered. 
+- ![alt text](image-47.png)
+- If for processing each element we want to use parallel threads use For All
+```c#
+evenNumbers.ForAll(item => {
+    Console.WriteLine($"{item}: Thread Id: {Thread.CurrentThread.ManagedThreadId}");
+});
+
+
+```
+
+## Producer, Consumer and Buffer
+- ![alt text](image-48.png)
+- ![alt text](image-49.png)
+- The AsParallel method enables parallel execution of a query, and WithMergeOptions is used to specify how the results of the parallel query are merged back together. 
+- This can be useful to control the performance and behavior of your parallel operations.
+- Here are the available MergeOptions:
+- **FullyBuffered**: This option waits for the entire query to finish before yielding any results.
+- **NotBuffered**: This option yields results as soon as they are available without buffering. If we set NotBuffered below, the for loop at the bottom starts executing without waiting for the parallel operation to finish
+- **AutoBuffered**: This option is a compromise between fully buffered and not buffered. It can provide some buffering for performance without waiting for the entire query to complete.
+```c#
+var items = Enumerable.Range(1, 200);
+
+var evenNumbers = items.AsParallel().WithMergeOptions(ParallelMergeOptions.FullyBuffered).Where(x=>
+{
+    Console.WriteLine($"Processing number {x}, Current Thread Id is {Thread.CurrentThread.ManagedThreadId} ");
+    return (x % 2 == 0);
+});
+
+Console.WriteLine($"There are {evenNumbers.Count()} even numbers in the collection");
+
+foreach (var item in evenNumbers)
+{
+    Console.WriteLine($"{item}: Thread Id: {Thread.CurrentThread.ManagedThreadId}");
+}
+
+Console.ReadLine();
+```
+## Foreach vs ForAll
+- In Linq we have lazy loading, so the the LINQ query is not executed till we actually use the results somewhere.
+- Same is the behavior in PLINQ
+- ForEach: Sequential processing, available in System.Collections.Generic namespace.
+- ForAll: Parallel processing, available in PLINQ (System.Linq namespace), and optimized for concurrent execution.
+- If we are having an AsParallel collection which is fully buffered, we know the consumption by the foreach loop will not start till the entire resultset is available and buffered.
+- However, in case of ForAll ,it will start consuming the values from the AsParallel collection as soon as they are available.
+- In the ForAll example, the AsParallel method enables parallel processing of the range of numbers, and ForAll ensures that the action (printing each number) is applied to each element concurrently.
+- In case of ForAll, same thread can be used for producing and consuming. 
+```c#
+ var items = Enumerable.Range(1, 20);
+
+var evenNumbers = items.AsParallel().WithMergeOptions(ParallelMergeOptions.FullyBuffered).Where(x=>
+{
+    Console.WriteLine($"Processing number {x}, Current Thread Id is {Thread.CurrentThread.ManagedThreadId} ");
+    return (x % 2 == 0);
+});
+
+Console.WriteLine($"There are {evenNumbers.Count()} even numbers in the collection");
+
+//foreach (var item in evenNumbers)
+//{
+//    Console.WriteLine($"{item}: Thread Id: {Thread.CurrentThread.ManagedThreadId}");
+//}
+evenNumbers.ForAll(item =>
+{
+    Console.WriteLine($"{item}: Thread Id: {Thread.CurrentThread.ManagedThreadId}");
+});
+
+Console.ReadLine();
+
+```
+- In case of ForAll result is
+- ![alt text](image-50.png)
+- Whereas in case of ForEach result is:
+- ![alt text](image-51.png)
+  
+## Exception Handling in PLINQ
+- Same as Parallel Loops
+- Throws aggregate exceptions
+- If there is an exception inside the AsParallel enumeration, it will only throw when we use the ForAll method to iterate over this collection.
+```c#
+ var items = Enumerable.Range(1, 20);
+
+ParallelQuery<int> evenNumbers = null;
+
+try
+{
+    evenNumbers = items.AsParallel().WithMergeOptions(ParallelMergeOptions.FullyBuffered).Where(x =>
+    {
+        Console.WriteLine($"Processing number {x}, Current Thread Id is {Thread.CurrentThread.ManagedThreadId} ");
+        if (x == 5) throw new InvalidOperationException($"This is intentional..{x}");
+        if (x == 19) throw new ArgumentNullException($"This is intentional..{x}");
+        return (x % 2 == 0);
+    });
+}
+catch(Exception ex)
+{ Console.WriteLine(ex.ToString()); }
+
+
+try
+{
+    evenNumbers.ForAll(item =>
+    {
+        Console.WriteLine($"{item}: Thread Id: {Thread.CurrentThread.ManagedThreadId}");
+    });
+}
+catch(AggregateException ex)
+{
+    ex.Handle(x =>
+    {
+        Console.WriteLine(x.Message.ToString());
+        return true;
+    });
+    
+}
+```
+
+## Cancellation in PLINQ
+- As Parallel can also be chained with the WithCancellation() method like this
+```c#
+ using var cts = new CancellationTokenSource();  
+ var items = Enumerable.Range(1, 200);
+
+ ParallelQuery<int> evenNumbers = null;
+
+try
+{
+    evenNumbers = items.AsParallel()
+        .WithMergeOptions(ParallelMergeOptions.FullyBuffered)
+        .WithCancellation(cts.Token)
+        .Where(x =>
+    {
+        Console.WriteLine($"Processing number {x}, Current Thread Id is {Thread.CurrentThread.ManagedThreadId} ");
+        return (x % 2 == 0);
+    });
+}
+catch(Exception ex)
+{ Console.WriteLine(ex.ToString()); }
+
+try
+{
+    evenNumbers.ForAll(item =>
+    {
+        if(item > 8) cts.Cancel();
+        Console.WriteLine($"{item}: Thread Id: {Thread.CurrentThread.ManagedThreadId}");
+    });
+}
+catch(OperationCanceledException ex)
+{
+    Console.WriteLine(ex.Message.ToString());
+}
+catch(AggregateException ex)
+{
+    ex.Handle(x =>
+    {
+        Console.WriteLine(x.Message.ToString());
+        return true;
+    });
+    
+}
+```
+
+## Concurrent Collections
+
+### Concurrent Queue
+- Very similar to regular queue but with some differences.
+- For concurrent collections, one common thing stands out, whenever we try to modify the collection in anyway, there is going to be a Try Method
+- This is because inside a Concurrent Collections, there may be multiple threads operating.
+- Concurrent collections in C# are part of the System.Collections.Concurrent namespace and are designed to handle concurrent access from multiple threads. 
+- These collections provide thread-safe operations without the need for manual locking. 
+- Concurrent Queues are ideal for producer-consumer scenarios where you need to enqueue and dequeue items in a thread-safe manner.
+```c#
+var concurrentQueue = new ConcurrentQueue<int>();
+concurrentQueue.Enqueue(1);
+if (concurrentQueue.TryDequeue(out int result))
+{
+    Console.WriteLine(result);
+}
+
+```
+- These concurrent collections are designed to simplify working with shared data in multithreaded applications, making it easier to write robust and efficient code.
+- In case of concurrent queue, there is already a built in locking mechanism for thread synchronization.
+- ![alt text](image-52.png)
+
+## Concurrent Stack
+- Similar to Regular Stack (LIFO) but can handle multiple threads.
+- We have TryPop() instead of Pop()
+```c#
+ var stack = new ConcurrentStack<int>();
+stack.Push(0);
+stack.Push(1);
+stack.Push(2);
+stack.Push(3);
+stack.TryPop(out var result);
+Console.WriteLine(result);
+
+```
+## BlockingCollection and Producer and Consumer Scenario
+- Blocking collection is a wrapper which is used to wrap around a concurrent queue or a concurrent stack or a concurrent bag.
+- It provides 2 features: Blocking and Bounding. They are related to producer and consumer pattern.
+- Remember in PLINQ we had a buffer between producer and consumer. Blocking and Bounding refer to this buffer.
+- Bounding means there is a maximum capacity of the buffer. 
+- Blocking means that when the maximum capacity of the buffer is reached, producer should stop producing and wait until consumer consumes products in the buffer and wait till there is more space.
+- There is bounding on the lower bound also. Consumer thread needs to block when buffer is empty.
+- ![alt text](image-53.png)
+- BlockingCollection<T> is a thread-safe, bounded (or unbounded) collection that provides blocking and bounding capabilities for adding and removing items.
+-  It is part of the System.Collections.Concurrent namespace and is particularly useful in producer-consumer scenarios where you need to manage the flow of data between multiple threads.
+-  In a blocking collection if it has no items, consumer thread is blocked.
+-  It has special enumerator like this:
+-  This enumerator has a special feature that it will not finish until we make this whole process complete. 
+```c#
+foreach(var request in collection.GetConsumingEnumerable())
+{
+    // Processing thread
+    Thread processingThread = new Thread(() => ProcessInput(request));
+    processingThread.Start();
+}
+
+```
+- To exit the blocking collection we need to use collection.CompleteAdding() method and inside the GetConsumingEnumerable, we need to check collection.IsCompleted then break
+```c#
+ var requestQueue = new ConcurrentQueue<string?>();
+BlockingCollection<string?> collection = new BlockingCollection<string?>(requestQueue,3);
+
+//2. Start the request monitoring thread
+Thread monitoringThread = new Thread(MonitorQueue);
+monitoringThread.Start();
+
+//1. Enqueue the requests
+Console.WriteLine("Server is running. Type 'exit' to stop.");
+while (true)
+{
+    string? input = Console.ReadLine();
+    if (input?.ToLower() == "exit")
+    {
+        collection.CompleteAdding(); 
+        break;
+    }
+
+    collection.Add(input);
+
+    Console.WriteLine($"Enqueued: {input}; queue size is :{collection.Count}");
+}
+
+void MonitorQueue()
+{
+
+        foreach(var request in collection.GetConsumingEnumerable())
+        {
+            if(collection.IsCompleted) break;
+            // Processing thread
+            Thread processingThread = new Thread(() => ProcessInput(request));
+            processingThread.Start();
+            
+            Thread.Sleep(2000);
+        }   
+}
+
+//3. Processing the requests
+void ProcessInput(string? input)
+{
+    // Simulate processing time
+    Thread.Sleep(2000);
+    Console.WriteLine($"Processed input: {input}");
+}
+```
+- We can use BlockingCollection around any concurrent collection that implements producer-consumer interface.

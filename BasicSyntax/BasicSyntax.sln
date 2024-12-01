@@ -59,9 +59,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExceptionHandlingAsyncAwait
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsyncAwaitSynchronizationContext", "..\AsyncAwaitSynchronizationContext\AsyncAwaitSynchronizationContext.csproj", "{852507F8-E352-435E-84B3-8FBB43B4268D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParallelLoops", "..\ParallelLoops\ParallelLoops.csproj", "{4576954C-0D50-4004-8998-C87A5894AF8B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParallelLoops", "..\ParallelLoops\ParallelLoops.csproj", "{4576954C-0D50-4004-8998-C87A5894AF8B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CancellationInParallelLoops", "..\CancellationInParallelLoops\CancellationInParallelLoops.csproj", "{93BA7402-DD74-4E04-81E2-0AE0416ED987}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CancellationInParallelLoops", "..\CancellationInParallelLoops\CancellationInParallelLoops.csproj", "{93BA7402-DD74-4E04-81E2-0AE0416ED987}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PLINQ", "..\PLINQ\PLINQ.csproj", "{15EBD973-CE84-41AA-B3AA-B6248A4F14FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConcurrentCollections", "..\ConcurrentCollections\ConcurrentCollections.csproj", "{F858F8D4-B60D-4E52-AA15-C54381310439}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -189,6 +193,14 @@ Global
 		{93BA7402-DD74-4E04-81E2-0AE0416ED987}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93BA7402-DD74-4E04-81E2-0AE0416ED987}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93BA7402-DD74-4E04-81E2-0AE0416ED987}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15EBD973-CE84-41AA-B3AA-B6248A4F14FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15EBD973-CE84-41AA-B3AA-B6248A4F14FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15EBD973-CE84-41AA-B3AA-B6248A4F14FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15EBD973-CE84-41AA-B3AA-B6248A4F14FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F858F8D4-B60D-4E52-AA15-C54381310439}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F858F8D4-B60D-4E52-AA15-C54381310439}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F858F8D4-B60D-4E52-AA15-C54381310439}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F858F8D4-B60D-4E52-AA15-C54381310439}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
